@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title><%= title %></title>
+  <link rel="stylesheet" href="/static/landing.css">
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='6' fill='%232563eb'/><text x='16' y='23' font-size='20' text-anchor='middle' fill='white' font-family='system-ui' font-weight='bold'>J</text></svg>">
+</head>
+<body>
+
+<!-- ── Public nav ── -->
+<nav class="landing-nav">
+  <div class="landing-nav-inner">
+    <a href="/" class="logo">Just<span>Invoice</span></a>
+    <nav>
+      <a href="/login">Log in</a>
+      <a href="/signup" class="btn-primary">Get started free</a>
+    </nav>
+  </div>
+</nav>
+
+<div style="max-width: 420px; margin: 3rem auto; padding: 0 1.5rem;">
+  <h2 style="font-size:1.5rem; font-weight:700; letter-spacing:-0.02em; margin-bottom:0.25rem;">Welcome back</h2>
+  <p class="muted" style="margin-bottom:1.5rem;">Sign in to your JustInvoice account.</p>
+
+  <% if (error) { %>
+    <div style="background:#fbeaea; border:1px solid #9a1f1f; border-radius:8px; padding:0.75rem 1rem; margin-bottom:1rem; font-size:0.9rem; color:#9a1f1f;">
+      ⚠ <%= error %>
+    </div>
+  <% } %>
+
+  <form method="post" action="/login" style="background:var(--bg-alt); border:1px solid var(--border); border-radius:10px; padding:1.5rem;">
+    <div style="margin-bottom:1rem;">
+      <label for="email" style="display:block; font-size:0.85rem; color:var(--muted); margin-bottom:0.35rem;">Email</label>
+      <input type="email" id="email" name="email" value="<%= email %>" autocomplete="username" required autofocus
+        style="width:100%; padding:0.55rem 0.7rem; border:1px solid var(--border); border-radius:6px; font-size:0.95rem; font-family:inherit;">
+    </div>
+    <div style="margin-bottom:1.25rem;">
+      <label for="password" style="display:block; font-size:0.85rem; color:var(--muted); margin-bottom:0.35rem;">Password</label>
+      <input type="password" id="password" name="password" autocomplete="current-password" required
+        style="width:100%; padding:0.55rem 0.7rem; border:1px solid var(--border); border-radius:6px; font-size:0.95rem; font-family:inherit;">
+    </div>
+    <div style="display:flex; gap:0.5rem; flex-wrap:wrap;">
+      <button type="submit" style="padding:0.55rem 1.25rem; font-size:0.9rem; border:1px solid var(--ink); background:var(--ink); color:#fff; border-radius:6px; cursor:pointer; font-family:inherit;">Log in</button>
+      <a href="/signup" style="padding:0.55rem 1rem; font-size:0.9rem; border:1px solid var(--border); background:#fff; color:var(--muted); border-radius:6px; text-decoration:none;">Create an account</a>
+    </div>
+  </form>
+</div>
+
+</body>
+</html>

@@ -1,0 +1,98 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Invoice <%= invoice.number %></title>
+</head>
+<body style="margin:0; padding:0; background:#f4f4f2; font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Arial,sans-serif; color:#1a1a1a;">
+  <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#f4f4f2; padding:2rem 0;">
+    <tr>
+      <td align="center">
+        <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="max-width:600px; background:#ffffff; border-radius:10px; border:1px solid #e5e5e3;">
+          <tr>
+            <td style="padding:2rem 2rem 1rem;">
+              <h2 style="margin:0 0 0.25rem; font-size:22px; letter-spacing:-0.01em;">Invoice <%= invoice.number %></h2>
+              <p style="margin:0; color:#666; font-size:14px;">From <strong><%= settings.business_name %></strong></p>
+            </td>
+          </tr>
+          <tr>
+            <td style="padding:0 2rem 1rem;">
+              <p style="margin:1rem 0; font-size:15px; line-height:1.5;">
+                Hi <%= invoice.client_name %>,<br><br>
+                Please find your invoice below. The total due is
+                <strong><%= formatMoney(invoice.total_cents, invoice.currency) %></strong>
+                by <strong><%= invoice.due_date %></strong>.
+              </p>
+            </td>
+          </tr>
+          <tr>
+            <td style="padding:0 2rem 1rem;">
+              <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#fafaf9; border:1px solid #e5e5e3; border-radius:8px; padding:1rem 1.25rem;">
+                <tr>
+                  <td style="font-size:13px; color:#666;">Issue date</td>
+                  <td style="font-size:13px; color:#666; text-align:right;">Due date</td>
+                </tr>
+                <tr>
+                  <td style="font-size:14px; font-weight:600;"><%= invoice.issue_date %></td>
+                  <td style="font-size:14px; font-weight:600; text-align:right;"><%= invoice.due_date %></td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+          <tr>
+            <td style="padding:0 2rem 1rem;">
+              <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="border-collapse:collapse; font-size:14px;">
+                <thead>
+                  <tr>
+                    <th align="left" style="padding:0.5rem 0; border-bottom:2px solid #1a1a1a; font-size:11px; text-transform:uppercase; letter-spacing:0.05em; color:#666;">Description</th>
+                    <th align="right" style="padding:0.5rem 0; border-bottom:2px solid #1a1a1a; font-size:11px; text-transform:uppercase; letter-spacing:0.05em; color:#666; width:60px;">Qty</th>
+                    <th align="right" style="padding:0.5rem 0; border-bottom:2px solid #1a1a1a; font-size:11px; text-transform:uppercase; letter-spacing:0.05em; color:#666; width:90px;">Unit</th>
+                    <th align="right" style="padding:0.5rem 0; border-bottom:2px solid #1a1a1a; font-size:11px; text-transform:uppercase; letter-spacing:0.05em; color:#666; width:100px;">Amount</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <% invoice.items.forEach(it => { %>
+                    <tr>
+                      <td style="padding:0.6rem 0; border-bottom:1px solid #eee;"><%= it.description %></td>
+                      <td align="right" style="padding:0.6rem 0; border-bottom:1px solid #eee;"><%= it.quantity %></td>
+                      <td align="right" style="padding:0.6rem 0; border-bottom:1px solid #eee;"><%= formatMoney(it.unit_price_cents, invoice.currency) %></td>
+                      <td align="right" style="padding:0.6rem 0; border-bottom:1px solid #eee;"><%= formatMoney(lineTotal(it), invoice.currency) %></td>
+                    </tr>
+                  <% }) %>
+                  <tr>
+                    <td colspan="3" align="right" style="padding:0.75rem 0; font-weight:600;">Total due</td>
+                    <td align="right" style="padding:0.75rem 0; font-weight:600; font-size:16px;"><%= formatMoney(invoice.total_cents, invoice.currency) %></td>
+                  </tr>
+                </tbody>
+              </table>
+            </td>
+          </tr>
+          <tr>
+            <td align="center" style="padding:1rem 2rem 2rem;">
+              <a href="<%= shareUrl %>"
+                 style="display:inline-block; background:#1a1a1a; color:#ffffff; text-decoration:none; padding:0.75rem 1.75rem; border-radius:6px; font-weight:600; font-size:15px;">
+                View &amp; Pay Invoice
+              </a>
+            </td>
+          </tr>
+          <% if (invoice.notes) { %>
+            <tr>
+              <td style="padding:0 2rem 1.5rem;">
+                <div style="border-top:1px solid #e5e5e3; padding-top:1rem; color:#444; font-size:13px; white-space:pre-wrap;"><%= invoice.notes %></div>
+              </td>
+            </tr>
+          <% } %>
+          <tr>
+            <td style="padding:1rem 2rem 2rem; border-top:1px solid #e5e5e3; color:#666; font-size:12px; line-height:1.5;">
+              <strong><%= settings.business_name %></strong><br>
+              <% if (settings.business_email) { %><%= settings.business_email %><br><% } %>
+              <% if (settings.business_address) { %><span style="white-space:pre-line;"><%= settings.business_address %></span><% } %>
+            </td>
+          </tr>
+        </table>
+      </td>
+    </tr>
+  </table>
+</body>
+</html>

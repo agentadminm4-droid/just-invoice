@@ -1,0 +1,25 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title><%= typeof title !== 'undefined' ? title : 'JustInvoice' %></title>
+  <link rel="stylesheet" href="/static/app.css">
+</head>
+<body>
+  <div class="container">
+    <header class="nav">
+      <h1><a href="/" style="text-decoration:none;">JustInvoice</a></h1>
+      <nav>
+        <% if (currentUser) { %>
+          <a href="/">Dashboard</a>
+          <a href="/invoices/new" class="primary">+ New invoice</a>
+          <a href="/settings">Settings</a>
+          <span class="muted" style="margin-left:1rem;"><%= currentUser.email %></span>
+          <a href="/logout">Log out</a>
+        <% } else { %>
+          <a href="/login">Log in</a>
+          <a href="/signup" class="primary">Sign up</a>
+        <% } %>
+      </nav>
+    </header>

@@ -1,0 +1,169 @@
+<%- include('_head', { title: isEdit ? 'Edit invoice — JustInvoice' : 'New invoice — JustInvoice' }) %>
+
+<h2><%= isEdit ? 'Edit invoice' : 'New invoice' %></h2>
+
+<form method="post" action="<%= isEdit ? '/invoices/' + invoice.id + '/edit?_method=PUT' : '/invoices' %>" id="invoice-form">
+
+  <div class="card">
+    <h3>Client</h3>
+    <div class="row">
+      <div class="field">
+        <label for="client_name">Name</label>
+        <input type="text" id="client_name" name="client_name"
+          value="<%= isEdit ? (invoice.client_name || '') : '' %>"
+          list="client-suggestions" required>
+        <datalist id="client-suggestions">
+          <% clients.forEach(c => { %>
+            <option value="<%= c.name %>"><%= c.email || '' %></option>
+          <% }) %>
+        </datalist>
+      </div>
+      <div class="field">
+        <label for="client_email">Email (optional)</label>
+        <input type="email" id="client_email" name="client_email"
+          value="<%= isEdit ? (invoice.client_email || '') : '' %>">
+      </div>
+      <div class="field" style="grid-column: 1 / -1;">
+        <label for="client_address">Address (optional)</label>
+        <textarea id="client_address" name="client_address" rows="2"
+          placeholder="Billing address"><%= isEdit ? (invoice.client_address || '') : '' %></textarea>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>Details</h3>
+    <div class="row">
+      <div class="field">
+        <label for="issue_date">Issue date</label>
+        <input type="date" id="issue_date" name="issue_date"
+          value="<%= isEdit ? invoice.issue_date : new Date().toISOString().slice(0,10) %>" required>
+      </div>
+      <div class="field">
+        <label for="due_date">Due date</label>
+        <input type="date" id="due_date" name="due_date"
+          value="<%= isEdit ? invoice.due_date : '' %>" required>
+      </div>
+      <div class="field">
+        <label for="currency">Currency</label>
+        <select id="currency" name="currency">
+          <% ['USD','EUR','GBP','CAD','AUD','JPY'].forEach(c => { %>
+            <option value="<%= c %>" <%= isEdit && invoice.currency === c ? 'selected' : '' %>><%= c %></option>
+          <% }) %>
+        </select>
+      </div>
+    </div>
+    <% if (settings && settings.tax_enabled === '1') { %>
+    <div class="field" style="margin-top:0.75rem;">
+      <%# Hidden must be BEFORE checkbox: last value wins in Express %>
+      <input type="hidden" name="apply_tax" value="0">
+      <label style="display:flex; align-items:center; gap:0.5rem; cursor:pointer;">
+        <input type="checkbox" name="apply_tax" value="1"
+          <%= isEdit && invoice.apply_tax ? 'checked' : (!isEdit ? 'checked' : '') %>
+          style="width:auto; margin:0;">
+        Apply <%= settings.tax_name || 'Tax' %> (<%= Math.round(parseFloat(settings.tax_rate) * 100) %>%) — total will be inclusive of tax
+      </label>
+    </div>
+    <% } else if (settings && settings.tax_enabled !== '1') { %>
+    <% } %>
+  </div>
+
+  <div class="card">
+    <h3>Line items</h3>
+    <table class="items-table" id="items-table">
+      <thead>
+        <tr>
+          <th>Description</th>
+          <th style="width:100px;">Qty</th>
+          <th style="width:140px;">Unit price</th>
+          <th style="width:40px;"></th>
+        </tr>
+      </thead>
+      <tbody id="items-body">
+        <% if (isEdit && invoice.items && invoice.items.length > 0) { %>
+          <% invoice.items.forEach((it, idx) => { %>
+            <tr data-existing-id="<%= it.id %>">
+              <input type="hidden" name="item_id" value="<%= it.id %>">
+              <td><input type="text" name="item_description" value="<%= it.description %>" required></td>
+              <td><input type="number" name="item_quantity" step="0.01" min="0" value="<%= it.quantity %>"></td>
+              <td><input type="number" name="item_unit_price" step="0.01" min="0" value="<%= (it.unit_price_cents / 100).toFixed(2) %>"></td>
+              <td><button type="button" class="remove-btn" onclick="removeRow(this)">✕</button></td>
+            </tr>
+          <% }) %>
+        <% } else { %>
+          <tr>
+            <td><input type="text" name="item_description" required></td>
+            <td><input type="number" name="item_quantity" step="0.01" min="0" value="1"></td>
+            <td><input type="number" name="item_unit_price" step="0.01" min="0" placeholder="0.00"></td>
+            <td><button type="button" class="remove-btn" onclick="removeRow(this)">✕</button></td>
+          </tr>
+        <% } %>
+      </tbody>
+    </table>
+    <div class="actions">
+      <button type="button" class="secondary" onclick="addRow()">+ Add line</button>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>Notes</h3>
+    <div class="field">
+      <textarea name="notes" placeholder="Optional notes for the client (payment instructions, thank you, etc.)"><%= isEdit ? (invoice.notes || '') : '' %></textarea>
+    </div>
+  </div>
+
+  <div class="actions">
+    <button type="submit"><%= isEdit ? 'Save changes' : 'Create invoice' %></button>
+    <a href="<%= isEdit ? '/invoices/' + invoice.id : '/' %>" class="btn ghost">Cancel</a>
+  </div>
+</form>
+
+<script>
+// Track removed existing items (for edit mode)
+const removedExistingIds = [];
+
+function addRow(isNew) {
+  const tbody = document.getElementById('items-body');
+  const tr = document.createElement('tr');
+  tr.innerHTML = `
+    <td><input type="text" name="item_description" required></td>
+    <td><input type="number" name="item_quantity" step="0.01" min="0" value="1"></td>
+    <td><input type="number" name="item_unit_price" step="0.01" min="0" placeholder="0.00"></td>
+    <td><button type="button" class="remove-btn" onclick="removeRow(this)">✕</button></td>
+  `;
+  tbody.appendChild(tr);
+}
+
+function removeRow(btn) {
+  const tr = btn.closest('tr');
+  const existingId = tr.getAttribute('data-existing-id');
+  if (existingId) {
+    // Mark for deletion and remove from DOM
+    removedExistingIds.push(existingId);
+  }
+  // Also remove from DOM
+  const tbody = document.getElementById('items-body');
+  if (tbody.children.length > 1) {
+    tr.remove();
+  } else {
+    // Don't remove the last row, just clear it
+    tr.querySelectorAll('input').forEach(i => i.value = '');
+    tr.removeAttribute('data-existing-id');
+    const hidden = tr.querySelector('input[name="item_id"]');
+    if (hidden) hidden.remove();
+  }
+}
+
+// Serialize removed existing IDs before submit
+document.getElementById('invoice-form').addEventListener('submit', function() {
+  if (removedExistingIds.length > 0) {
+    const input = document.createElement('input');
+    input.type = 'hidden';
+    input.name = 'deleted_items';
+    input.value = removedExistingIds.join(',');
+    this.appendChild(input);
+  }
+});
+</script>
+
+<%- include('_foot') %>

@@ -1,0 +1,123 @@
+<%- include('_head', { title: invoice.number + ' — JustInvoice' }) %>
+
+<h2><%= invoice.number %> <span class="badge <%= invoice.status %>"><%= invoice.status %></span></h2>
+<p class="muted">
+  To <%= invoice.client_name %><% if (invoice.client_email) { %> &lt;<%= invoice.client_email %>&gt;<% } %> · due <%= invoice.due_date %>
+  <% if (invoice.client_address) { %>
+  <br><span class="muted" style="font-size:0.9em;"><%= invoice.client_address.replace(/\n/g, '<br>') %></span>
+  <% } %>
+  <% if (invoice.sent_at) { %>
+    · last sent <%= invoice.sent_at %>
+  <% } %>
+</p>
+
+<% if (flash && flash.sent) { %>
+  <div class="card" style="border-color:#0a7a3b; background:#e8f5ec;">
+    ✓ Invoice emailed to <strong><%= invoice.client_email %></strong>. Status updated to <span class="badge sent">sent</span>.
+  </div>
+<% } %>
+<% if (flash && flash.error) { %>
+  <div class="card" style="border-color:#9a1f1f; background:#fbeaea;">
+    ⚠ <%= flash.error %>
+  </div>
+<% } %>
+
+<div class="card">
+  <h3>Share link</h3>
+  <p class="muted" style="margin:0 0 0.5rem;">Send this URL to your client. They can view the invoice and download the PDF.</p>
+  <div class="share-box">
+    <code id="share-url"><%= shareUrl %></code>
+    <button class="secondary" type="button" onclick="copyShare()">Copy</button>
+  </div>
+</div>
+
+<div class="card">
+  <h3>Invoice</h3>
+  <table>
+    <thead>
+      <tr>
+        <th>Description</th>
+        <th class="num" style="width:90px;">Qty</th>
+        <th class="num" style="width:140px;">Unit</th>
+        <th class="num" style="width:140px;">Amount</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% invoice.items.forEach(it => { %>
+        <tr>
+          <td><%= it.description %></td>
+          <td class="num"><%= it.quantity %></td>
+          <td class="num"><%= formatMoney(it.unit_price_cents, invoice.currency) %></td>
+          <td class="num"><%= formatMoney(lineTotal(it), invoice.currency) %></td>
+        </tr>
+      <% }) %>
+      <% if (invoice.tax_cents > 0) { %>
+      <tr>
+        <td colspan="3" class="num">Subtotal</td>
+        <td class="num"><%= formatMoney(invoice.subtotal_cents, invoice.currency) %></td>
+      </tr>
+      <tr>
+        <td colspan="3" class="num"><%= invoice.tax_name %> (<%= invoice.tax_rate_pct %>%)</td>
+        <td class="num"><%= formatMoney(invoice.tax_cents, invoice.currency) %></td>
+      </tr>
+      <tr>
+        <td colspan="3" class="num"><strong>Total</strong></td>
+        <td class="num"><strong><%= formatMoney(invoice.total_cents, invoice.currency) %></strong></td>
+      </tr>
+      <% } else { %>
+      <tr>
+        <td colspan="3" class="num"><strong>Total</strong></td>
+        <td class="num"><strong><%= formatMoney(invoice.total_cents, invoice.currency) %></strong></td>
+      </tr>
+      <% } %>
+    </tbody>
+  </table>
+  <% if (invoice.notes) { %>
+    <p class="muted" style="margin-top:1rem; white-space:pre-wrap;"><%= invoice.notes %></p>
+  <% } %>
+</div>
+
+<div class="card">
+  <h3>Actions</h3>
+  <div class="actions">
+    <% if (invoice.status === 'draft') { %>
+      <a href="/invoices/<%= invoice.id %>/edit" class="btn secondary">Edit</a>
+      <button type="button" onclick="if(confirm('Delete this invoice? This cannot be undone.')){const f=document.createElement('form');f.method='POST';f.action='/invoices/<%= invoice.id %>/delete';document.body.appendChild(f);f.submit();}">Delete</button>
+    <% } else { %>
+      <button type="button" disabled title="Only draft invoices can be edited">Edit</button>
+      <button type="button" disabled title="Only draft invoices can be deleted">Delete</button>
+    <% } %>
+    <% if (emailConfigured && invoice.client_email) { %>
+      <form method="post" action="/invoices/<%= invoice.id %>/send" style="display:inline;">
+        <button type="submit"><%= invoice.sent_at ? 'Resend to client' : 'Send to client' %></button>
+      </form>
+    <% } %>
+    <a href="/invoices/<%= invoice.id %>/pdf" class="btn secondary" target="_blank">Download PDF</a>
+    <form method="post" action="/invoices/<%= invoice.id %>/status" style="display:inline;">
+      <input type="hidden" name="status" value="sent">
+      <button type="submit" class="secondary" <%= invoice.status === 'sent' ? 'disabled' : '' %>>Mark sent</button>
+    </form>
+    <form method="post" action="/invoices/<%= invoice.id %>/status" style="display:inline;">
+      <input type="hidden" name="status" value="paid">
+      <button type="submit" <%= invoice.status === 'paid' ? 'disabled' : '' %>>Mark paid</button>
+    </form>
+    <form method="post" action="/invoices/<%= invoice.id %>/status" style="display:inline;">
+      <input type="hidden" name="status" value="draft">
+      <button type="submit" class="ghost" <%= invoice.status === 'draft' ? 'disabled' : '' %>>Revert to draft</button>
+    </form>
+  </div>
+</div>
+
+<script>
+function copyShare() {
+  const url = document.getElementById('share-url').textContent;
+  navigator.clipboard.writeText(url).then(() => {
+    const btn = event.target;
+    const orig = btn.textContent;
+    btn.textContent = 'Copied!';
+    setTimeout(() => btn.textContent = orig, 1500);
+  });
+}
+</script>
+
+<%- include('_foot') %>

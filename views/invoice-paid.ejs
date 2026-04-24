@@ -1,0 +1,31 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Payment received — <%= invoice.number %></title>
+  <link rel="stylesheet" href="/static/app.css">
+</head>
+<body>
+  <div class="container">
+    <div class="card" style="padding:2.5rem; text-align:center;">
+      <div style="font-size: 3rem; margin-bottom: 0.5rem;">✓</div>
+      <h2 style="margin: 0 0 0.5rem;">Thank you — payment received</h2>
+      <p class="muted" style="margin: 0 0 1.5rem;">
+        Invoice <strong><%= invoice.number %></strong> ·
+        <%= formatMoney(invoice.total_cents, invoice.currency) %>
+        <% if (invoice.status !== 'paid') { %>
+          <br><small>(Still finalizing — refresh this page in a moment if the status doesn't update.)</small>
+        <% } %>
+      </p>
+      <div class="actions" style="justify-content:center;">
+        <a href="/i/<%= invoice.public_token %>" class="btn secondary">Back to invoice</a>
+        <a href="/i/<%= invoice.public_token %>/pdf" class="btn secondary" target="_blank">Download PDF</a>
+      </div>
+      <p class="muted" style="margin-top:2rem; font-size:0.85rem;">
+        A receipt will be emailed to you by Stripe.
+      </p>
+    </div>
+  </div>
+</body>
+</html>

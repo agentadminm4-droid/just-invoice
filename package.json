@@ -1,0 +1,26 @@
+{
+  "name": "just-invoice",
+  "version": "0.1.0",
+  "description": "Flat-rate invoicing MVP for freelancers. No fees, no bloat.",
+  "main": "src/server.js",
+  "scripts": {
+    "start": "node src/server.js",
+    "dev": "node --watch src/server.js"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "dependencies": {
+    "better-sqlite3": "^11.3.0",
+    "dotenv": "^16.4.5",
+    "bcrypt": "^5.1.1",
+    "connect-sqlite3": "^0.9.15",
+    "ejs": "^3.1.10",
+    "express": "^4.21.0",
+    "express-session": "^1.18.1",
+    "nanoid": "^3.3.7",
+    "puppeteer": "^23.5.0",
+    "resend": "^4.0.1",
+    "stripe": "^17.3.1"
+  }
+}

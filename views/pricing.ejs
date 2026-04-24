@@ -1,0 +1,196 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title><%= title %></title>
+  <link rel="stylesheet" href="/static/landing.css">
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='6' fill='%232563eb'/><text x='16' y='23' font-size='20' text-anchor='middle' fill='white' font-family='system-ui' font-weight='bold'>J</text></svg>">
+</head>
+<body>
+
+<!-- ── Nav ── -->
+<nav class="landing-nav">
+  <div class="landing-nav-inner">
+    <a href="/" class="logo">Just<span>Invoice</span></a>
+    <nav>
+      <a href="/login">Log in</a>
+      <a href="/signup" class="btn-primary">Get started free</a>
+    </nav>
+  </div>
+</nav>
+
+<div class="pricing-page-hero">
+  <h1>Simple, honest pricing.</h1>
+  <p>One flat rate. No transaction fees. No tier confusion.</p>
+</div>
+
+<!-- ── Pricing card ── -->
+<section class="section">
+  <div class="pricing-wrapper">
+    <div class="pricing-card">
+      <div class="price">$9<span>/month</span></div>
+      <p class="price-sub">Billed monthly. Cancel anytime.</p>
+      <ul class="pricing-features">
+        <li>
+          <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5"/></svg>
+          Unlimited invoices
+        </li>
+        <li>
+          <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5"/></svg>
+          Unlimited clients
+        </li>
+        <li>
+          <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5"/></svg>
+          Professional PDF invoices
+        </li>
+        <li>
+          <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5"/></svg>
+          Shareable invoice links
+        </li>
+        <li>
+          <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5"/></svg>
+          Stripe card payments
+        </li>
+        <li>
+          <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5"/></svg>
+          One-click email sending
+        </li>
+        <li>
+          <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5"/></svg>
+          Status tracking (draft / sent / paid)
+        </li>
+        <li>
+          <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5"/></svg>
+          No transaction fees
+        </li>
+        <li>
+          <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5"/></svg>
+          Data exportable anytime
+        </li>
+      </ul>
+      <a href="/signup" class="btn-primary">Get started free</a>
+      <p style="margin-top:1rem; font-size:0.8rem; color:var(--muted);">No credit card required to sign up.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ── Comparison ── -->
+<section class="section section-alt">
+  <p class="section-label" style="text-align:center;">Comparison</p>
+  <h2 class="section-title">How we stack up</h2>
+  <p class="section-sub">See how JustInvoice compares to the alternatives.</p>
+  <div class="pricing-comparison" style="margin-top:2rem;">
+    <table>
+      <thead>
+        <tr>
+          <th></th>
+          <th style="color:var(--blue); font-weight:700;">JustInvoice</th>
+          <th>Wave</th>
+          <th>FreshBooks</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Monthly cost</td>
+          <td><strong>$9</strong></td>
+          <td>Free (but 2.9% + 60¢ per transaction)</td>
+          <td>From $17/mo</td>
+        </tr>
+        <tr>
+          <td>Transaction fee</td>
+          <td class="check">✓ None</td>
+          <td class="cross">✗ 2.9% + 60¢</td>
+          <td>Varies</td>
+        </tr>
+        <tr>
+          <td>Unlimited invoices</td>
+          <td class="check">✓</td>
+          <td class="cross">✗</td>
+          <td>Only on higher tiers</td>
+        </tr>
+        <tr>
+          <td>Stripe payments</td>
+          <td class="check">✓ Included</td>
+          <td>Extra fee</td>
+          <td>Extra fee</td>
+        </tr>
+        <tr>
+          <td>Clean, simple UI</td>
+          <td class="check">✓</td>
+          <td>Cluttered</td>
+          <td>Bloated</td>
+        </tr>
+        <tr>
+          <td>One-click email invoicing</td>
+          <td class="check">✓</td>
+          <td>Limited</td>
+          <td>Yes</td>
+        </tr>
+        <tr>
+          <td>Self-hostable</td>
+          <td class="check">✓ Own your data</td>
+          <td class="cross">✗</td>
+          <td class="cross">✗</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<!-- ── FAQ ── -->
+<section class="section">
+  <p class="section-label">FAQ</p>
+  <h2 class="section-title">Questions? Answers.</h2>
+  <div class="faq-list">
+    <details>
+      <summary>Do I need an account to send an invoice?</summary>
+      <p class="faq-answer">Yes — your account keeps your invoices, clients, and settings private and secure. Sign-up takes about 30 seconds.</p>
+    </details>
+    <details>
+      <summary>Can I use my own domain for invoice links?</summary>
+      <p class="faq-answer">For now, invoice links use the JustInvoice domain. You can deploy JustInvoice on your own server with your own domain if you self-host — the codebase is self-contained.</p>
+    </details>
+    <details>
+      <summary>What payment methods can clients use?</summary>
+      <p class="faq-answer">Any card Stripe accepts — Visa, Mastercard, American Express, Discover, and more. ACH, bank transfers, and wallets depend on your Stripe account configuration.</p>
+    </details>
+    <details>
+      <summary>Can I cancel anytime?</summary>
+      <p class="faq-answer">Yes. Cancel whenever you like from your settings page. Your data stays accessible (exportable) even after cancellation.</p>
+    </details>
+    <details>
+      <summary>Is there a free trial?</summary>
+      <p class="faq-answer">There's no trial period because the $9/month price is built to be affordable from day one — not a bait-and-switch. Start free, pay when you're earning.</p>
+    </details>
+    <details>
+      <summary>What happens when my client pays?</summary>
+      <p class="faq-answer">Stripe processes the card and deposits the money directly into your linked bank account. JustInvoice updates the invoice status to "Paid" automatically via webhook — no manual work required.</p>
+    </details>
+  </div>
+</section>
+
+<!-- ── CTA ── -->
+<section class="section section-alt">
+  <div style="text-align:center;">
+    <h2 style="font-size:1.75rem; font-weight:800; letter-spacing:-0.02em; margin-bottom:0.75rem;">Start invoicing properly today.</h2>
+    <p style="color:var(--muted); margin-bottom:1.75rem; font-size:1.05rem;">2-minute setup. No credit card needed.</p>
+    <a href="/signup" class="btn-primary">Get started free</a>
+  </div>
+</section>
+
+<!-- ── Footer ── -->
+<footer class="landing-footer">
+  <div class="landing-footer-inner">
+    <a href="/" class="logo">Just<span>Invoice</span></a>
+    <nav>
+      <a href="/login">Log in</a>
+      <a href="/pricing">Pricing</a>
+      <a href="/signup">Get started</a>
+    </nav>
+    <small>&copy; <?= new Date().getFullYear() ?> JustInvoice.</small>
+  </div>
+</footer>
+
+</body>
+</html>

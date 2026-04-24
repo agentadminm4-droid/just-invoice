@@ -1,0 +1,16 @@
+[railway]
+  # Railway will auto-detect Node.js from package.json.
+  # Explicit start command:
+  entrypoint = "npm start"
+
+[deploy]
+  # Health check — Railway pings this to know the app is up.
+  healthcheckPath = "/"
+  # Or use a dedicated endpoint if needed:
+  # healthcheckPath = "/api/health"
+
+[volume]
+  # Mount ./data as a persistent volume.
+  # SQLite database and sessions live here.
+  # Without this, the DB resets on every deploy.
+  mountPath = "./data"

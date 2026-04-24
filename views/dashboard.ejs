@@ -1,0 +1,54 @@
+<%- include('_head', { title: 'Dashboard — JustInvoice' }) %>
+
+<h2>Invoices</h2>
+
+<div class="stats">
+  <div class="stat">
+    <div class="label">Total invoices</div>
+    <div class="value"><%= totals.count %></div>
+  </div>
+  <div class="stat">
+    <div class="label">Outstanding</div>
+    <div class="value"><%= formatMoney(totals.outstanding) %></div>
+  </div>
+  <div class="stat">
+    <div class="label">Paid</div>
+    <div class="value"><%= formatMoney(totals.paid) %></div>
+  </div>
+  <div class="stat">
+    <div class="label">Lifetime total</div>
+    <div class="value"><%= formatMoney(totals.total) %></div>
+  </div>
+</div>
+
+<% if (invoices.length === 0) { %>
+  <div class="card empty">
+    <p>No invoices yet.</p>
+    <a href="/invoices/new" class="btn">Create your first invoice</a>
+  </div>
+<% } else { %>
+  <table>
+    <thead>
+      <tr>
+        <th>Number</th>
+        <th>Client</th>
+        <th>Due</th>
+        <th>Status</th>
+        <th class="num">Amount</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% invoices.forEach(inv => { %>
+        <tr>
+          <td><a href="/invoices/<%= inv.id %>"><%= inv.number %></a></td>
+          <td><%= inv.client_name %></td>
+          <td><%= inv.due_date %></td>
+          <td><span class="badge <%= inv.status %>"><%= inv.status %></span></td>
+          <td class="num"><%= formatMoney(inv.total_cents, inv.currency) %></td>
+        </tr>
+      <% }) %>
+    </tbody>
+  </table>
+<% } %>
+
+<%- include('_foot') %>

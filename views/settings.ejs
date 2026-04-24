@@ -1,0 +1,95 @@
+<%- include('_head', { title: 'Settings — JustInvoice' }) %>
+
+<h2>Settings</h2>
+<p class="muted">This info appears on every invoice.</p>
+
+<div class="card">
+  <h3>Email (Resend)</h3>
+  <% if (email.configured) { %>
+    <p style="margin:0;"><span class="badge paid">Connected</span> Resend API key detected.</p>
+    <p class="muted" style="margin:0.5rem 0 0;">
+      Sending from <code><%= email.from || 'onboarding@resend.dev' %></code>.
+      <% if (!email.from || /resend\.dev$/.test(email.from)) { %>
+        ⚠ Using Resend's shared sender — fine for testing, but verify your own domain for production.
+      <% } %>
+    </p>
+  <% } else { %>
+    <p style="margin:0;"><span class="badge draft">Not configured</span> Set <code>RESEND_API_KEY</code> in <code>.env</code> to enable invoice emails.</p>
+    <p class="muted" style="margin:0.5rem 0 0;">Get a free API key at <code>resend.com</code>. See the README for setup steps.</p>
+  <% } %>
+</div>
+
+<div class="card">
+  <h3>Payments (Stripe)</h3>
+  <% if (stripe.configured) { %>
+    <p style="margin:0;"><span class="badge paid">Connected</span> Stripe secret key detected.</p>
+    <% if (!stripe.webhookConfigured) { %>
+      <p class="muted" style="margin:0.5rem 0 0;">⚠ Webhook secret missing — payments will work but status updates rely on the client returning from Stripe. Set <code>STRIPE_WEBHOOK_SECRET</code> in <code>.env</code>.</p>
+    <% } else { %>
+      <p class="muted" style="margin:0.5rem 0 0;">Webhook signing secret is configured.</p>
+    <% } %>
+  <% } else { %>
+    <p style="margin:0;"><span class="badge draft">Not configured</span> Set <code>STRIPE_SECRET_KEY</code> in <code>.env</code> to enable online payments.</p>
+    <p class="muted" style="margin:0.5rem 0 0;">See <code>.env.example</code> and the README for setup steps.</p>
+  <% } %>
+</div>
+
+<form method="post" action="/settings">
+
+<div class="card">
+  <h3>Sales tax</h3>
+  <div class="row">
+    <div class="field">
+      <label for="tax_name">Tax name</label>
+      <input type="text" id="tax_name" name="tax_name" value="<%= values.tax_name || 'HST' %>" maxlength="20">
+      <small class="muted">e.g. HST, GST, VAT, Sales Tax</small>
+    </div>
+    <div class="field">
+      <label for="tax_rate">Tax rate (decimal)</label>
+      <input type="number" id="tax_rate" name="tax_rate" step="0.001" min="0" max="1" value="<%= values.tax_rate || '0.13' %>">
+      <small class="muted">Enter as decimal: 0.13 = 13%, 0.05 = 5%.</small>
+    </div>
+  </div>
+  <div class="field">
+    <label style="display:flex; align-items:center; gap:0.5rem; cursor:pointer; margin-top:0.5rem;">
+      <input type="checkbox" name="tax_enabled" value="1" <%= values.tax_enabled === '1' ? 'checked' : '' %>
+        style="width:auto; margin:0;">
+      Enable sales tax — show tax line on invoices
+    </label>
+  </div>
+  <details style="margin-top:0.75rem; border-top:1px solid var(--line); padding-top:0.75rem;">
+    <summary style="cursor:pointer; font-size:0.85rem; color:var(--muted);">Common rates by jurisdiction</summary>
+    <div style="padding-top:0.5rem; font-size:0.85rem; color:var(--muted);">
+      <strong>Canada:</strong> GST 5% (0.05), HST Ontario 13% (0.13), HST NB/NS/NL 15% (0.15), PST varies by province<br>
+      <strong>UK:</strong> VAT 20% (0.20)<br>
+      <strong>EU:</strong> VAT 19–27% depending on country<br>
+      <strong>US:</strong> No federal sales tax; state/local rates vary 0–10%
+    </div>
+  </details>
+</div>
+  <div class="card">
+    <div class="field">
+      <label for="business_name">Business name</label>
+      <input type="text" id="business_name" name="business_name" value="<%= values.business_name || '' %>" required>
+    </div>
+    <div class="field">
+      <label for="business_email">Business email</label>
+      <input type="email" id="business_email" name="business_email" value="<%= values.business_email || '' %>">
+    </div>
+    <div class="field">
+      <label for="business_address">Business address</label>
+      <textarea id="business_address" name="business_address"><%= values.business_address || '' %></textarea>
+    </div>
+    <div class="field">
+      <label for="invoice_prefix">Invoice number prefix</label>
+      <input type="text" id="invoice_prefix" name="invoice_prefix" value="<%= values.invoice_prefix || 'INV' %>" maxlength="10">
+      <small class="muted">Numbers look like <code><%= values.invoice_prefix || 'INV' %>-<%= new Date().getFullYear() %>-0001</code></small>
+    </div>
+  </div>
+  <div class="actions">
+    <button type="submit">Save</button>
+    <a href="/" class="btn ghost">Back</a>
+  </div>
+</form>
+
+<%- include('_foot') %>

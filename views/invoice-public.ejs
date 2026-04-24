@@ -1,0 +1,103 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Invoice <%= invoice.number %></title>
+  <link rel="stylesheet" href="/static/app.css">
+</head>
+<body>
+  <div class="container">
+    <div class="card" style="padding:2rem;">
+      <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:2rem;">
+        <div>
+          <h2 style="margin:0;">Invoice</h2>
+          <p class="muted" style="margin:0.25rem 0 0;">#<%= invoice.number %></p>
+        </div>
+        <div style="text-align:right;">
+          <strong><%= settings.business_name %></strong><br>
+          <span class="muted"><%= settings.business_email %></span>
+          <% if (settings.business_address) { %>
+            <br><span class="muted" style="white-space:pre-line;"><%= settings.business_address %></span>
+          <% } %>
+        </div>
+      </div>
+
+      <div class="row" style="margin-bottom:1.5rem;">
+        <div>
+          <div class="muted" style="text-transform:uppercase; font-size:0.75rem; letter-spacing:0.05em;">Billed to</div>
+          <strong><%= invoice.client_name %></strong>
+          <% if (invoice.client_email) { %><br><span class="muted"><%= invoice.client_email %></span><% } %>
+          <% if (invoice.client_address) { %><br><span class="muted" style="white-space:pre-wrap;"><%= invoice.client_address %></span><% } %>
+        </div>
+        <div>
+          <div class="muted" style="text-transform:uppercase; font-size:0.75rem; letter-spacing:0.05em;">Issue date</div>
+          <%= invoice.issue_date %>
+        </div>
+        <div>
+          <div class="muted" style="text-transform:uppercase; font-size:0.75rem; letter-spacing:0.05em;">Due date</div>
+          <%= invoice.due_date %>
+        </div>
+        <div>
+          <div class="muted" style="text-transform:uppercase; font-size:0.75rem; letter-spacing:0.05em;">Status</div>
+          <span class="badge <%= invoice.status %>"><%= invoice.status %></span>
+        </div>
+      </div>
+
+      <table>
+        <thead>
+          <tr>
+            <th>Description</th>
+            <th class="num" style="width:90px;">Qty</th>
+            <th class="num" style="width:140px;">Unit</th>
+            <th class="num" style="width:140px;">Amount</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% invoice.items.forEach(it => { %>
+            <tr>
+              <td><%= it.description %></td>
+              <td class="num"><%= it.quantity %></td>
+              <td class="num"><%= formatMoney(it.unit_price_cents, invoice.currency) %></td>
+              <td class="num"><%= formatMoney(lineTotal(it), invoice.currency) %></td>
+            </tr>
+          <% }) %>
+          <% if (invoice.tax_cents > 0) { %>
+          <tr>
+            <td colspan="3" class="num">Subtotal</td>
+            <td class="num"><%= formatMoney(invoice.subtotal_cents, invoice.currency) %></td>
+          </tr>
+          <tr>
+            <td colspan="3" class="num"><%= invoice.tax_name %> (<%= invoice.tax_rate_pct %>%)</td>
+            <td class="num"><%= formatMoney(invoice.tax_cents, invoice.currency) %></td>
+          </tr>
+          <% } %>
+          <tr>
+            <td colspan="3" class="num"><strong>Total due</strong></td>
+            <td class="num"><strong><%= formatMoney(invoice.total_cents, invoice.currency) %></strong></td>
+          </tr>
+        </tbody>
+      </table>
+
+      <% if (invoice.notes) { %>
+        <div style="margin-top:1.5rem; padding-top:1rem; border-top:1px solid var(--line);">
+          <div class="muted" style="text-transform:uppercase; font-size:0.75rem; letter-spacing:0.05em; margin-bottom:0.5rem;">Notes</div>
+          <div style="white-space:pre-wrap;"><%= invoice.notes %></div>
+        </div>
+      <% } %>
+
+      <div class="actions" style="margin-top:1.5rem;">
+        <% if (stripeConfigured && invoice.status !== 'paid') { %>
+          <form method="post" action="/i/<%= invoice.public_token %>/pay" style="display:inline;">
+            <button type="submit">Pay <%= formatMoney(invoice.total_cents, invoice.currency) %> now</button>
+          </form>
+        <% } %>
+        <a href="/i/<%= invoice.public_token %>/pdf" class="btn secondary" target="_blank">Download PDF</a>
+      </div>
+      <% if (invoice.status === 'paid') { %>
+        <p class="muted" style="margin-top:1rem;">✓ This invoice has been paid. Thank you!</p>
+      <% } %>
+    </div>
+  </div>
+</body>
+</html>
