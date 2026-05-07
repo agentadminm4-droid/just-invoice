@@ -291,7 +291,7 @@ app.get('/dashboard', requireAuth, (req, res) => {
 app.get('/invoices/new', requireAuth, (req, res) => {
   const clients = invoicesLib.listClientsForUser(req.session.userId);
   const userSettings = allSettings(req.session.userId);
-  res.render('invoice-form', { clients, settings: userSettings });
+  res.render('invoice-form', { clients, settings: userSettings, isEdit: false });
 });
 
 app.post('/invoices', requireAuth, (req, res) => {
