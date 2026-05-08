@@ -38,6 +38,9 @@
     <div class="business">
       <strong><%= settings.business_name %></strong><br>
       <span class="muted"><%= settings.business_email %></span>
+      <% if (settings.business_phone) { %>
+        <br><span class="muted"><%= settings.business_phone %></span>
+      <% } %>
       <% if (settings.business_address) { %>
         <br><span class="muted"><%= settings.business_address %></span>
       <% } %>

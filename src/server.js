@@ -456,7 +456,7 @@ app.get('/settings', requireAuth, (req, res) => {
 });
 
 app.post('/settings', requireAuth, (req, res) => {
-  const keys = ['business_name', 'business_email', 'business_address', 'invoice_prefix'];
+  const keys = ['business_name', 'business_email', 'business_phone', 'business_address', 'invoice_prefix'];
   for (const k of keys) {
     if (Object.prototype.hasOwnProperty.call(req.body, k)) {
       writeSetting(req.session.userId, k, String(req.body[k] || ''));

@@ -173,6 +173,7 @@ function claimLegacyData(userId) {
 const DEFAULT_SETTINGS = {
   business_name: 'Your Business Name',
   business_email: '',
+  business_phone: '',
   business_address: '',
   invoice_prefix: 'INV',
   tax_name: 'HST',
