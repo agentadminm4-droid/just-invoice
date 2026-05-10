@@ -55,10 +55,8 @@
     </div>
     <% if (settings && settings.tax_enabled === '1') { %>
     <div class="field" style="margin-top:0.75rem;">
-      <%# Hidden must be BEFORE checkbox: last value wins in Express %>
-      <input type="hidden" name="apply_tax" value="0">
       <label style="display:flex; align-items:center; gap:0.5rem; cursor:pointer;">
-        <input type="checkbox" name="apply_tax" value="1"
+        <input type="checkbox" name="apply_tax" value="1" id="apply_tax"
           <%= isEdit && invoice.apply_tax ? 'checked' : (!isEdit ? 'checked' : '') %>
           style="width:auto; margin:0;">
         Apply <%= settings.tax_name || 'Tax' %> (<%= Math.round(parseFloat(settings.tax_rate) * 100) %>%) — total will be inclusive of tax
