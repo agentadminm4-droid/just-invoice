@@ -447,13 +447,6 @@ app.get('/invoices/:id/pdf', requireAuth, async (req, res, next) => {
   } catch (err) { next(err); }
 });
 
-app.get('/debug-tax', requireAuth, (req, res) => {
-  const s = allSettings(req.session.userId);
-  const cfg = db.prepare(`SELECT key, value FROM settings WHERE user_id = ?`).all(req.session.userId);
-  const invoices = db.prepare(`SELECT id, number, apply_tax, status FROM invoices WHERE user_id = ? ORDER BY id DESC LIMIT 5`).all(req.session.userId);
-  res.json({ allSettings: s, rawRows: cfg, recentInvoices: invoices });
-});
-
 app.get('/settings', requireAuth, (req, res) => {
   res.render('settings', {
     values: allSettings(req.session.userId),
