@@ -447,6 +447,12 @@ app.get('/invoices/:id/pdf', requireAuth, async (req, res, next) => {
   } catch (err) { next(err); }
 });
 
+app.get('/debug-tax', requireAuth, (req, res) => {
+  const s = allSettings(req.session.userId);
+  const cfg = db.prepare(`SELECT key, value FROM settings WHERE user_id = ?`).all(req.session.userId);
+  res.json({ allSettings: s, rawRows: cfg });
+});
+
 app.get('/settings', requireAuth, (req, res) => {
   res.render('settings', {
     values: allSettings(req.session.userId),
