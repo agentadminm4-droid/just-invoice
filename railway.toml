@@ -13,4 +13,4 @@
   # Mount ./data as a persistent volume.
   # SQLite database and sessions live here.
   # Without this, the DB resets on every deploy.
-  mountPath = "./data"
+  mountPath = "/app/data"
