@@ -1,5 +1,5 @@
 // Load environment before anything else that reads it.
-require('dotenv').config();
+require('dotenv').config({ override: false });
 
 if (!process.env.SESSION_SECRET) {
   console.error(
