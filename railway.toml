@@ -9,3 +9,8 @@
   # Or use a dedicated endpoint if needed:
   # healthcheckPath = "/api/health"
 
+[variables]
+  STRIPE_SECRET_KEY = "${{STRIPE_SECRET_KEY}}"
+  RESEND_API_KEY = "${{RESEND_API_KEY}}"
+  STRIPE_WEBHOOK_SECRET = "${{STRIPE_WEBHOOK_SECRET}}"
+
