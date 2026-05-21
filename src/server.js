@@ -146,13 +146,15 @@ function requireGuest(req, res, next) {
 // -----------------------------------------------------------------------------
 // TEMP DEBUG — remove before launch
 app.get('/debug-env', (req, res) => {
-  res.json({
-    STRIPE_SECRET_KEY: process.env.STRIPE_SECRET_KEY ? 'SET (' + process.env.STRIPE_SECRET_KEY.slice(0,8) + '...)' : 'NOT SET',
-    RESEND_API_KEY: process.env.RESEND_API_KEY ? 'SET (' + process.env.RESEND_API_KEY.slice(0,8) + '...)' : 'NOT SET',
-    SESSION_SECRET: process.env.SESSION_SECRET ? 'SET' : 'NOT SET',
-    EMAIL_FROM: process.env.EMAIL_FROM || 'NOT SET',
-    NODE_ENV: process.env.NODE_ENV || 'NOT SET',
-  });
+  const safe = {};
+  for (const [k, v] of Object.entries(process.env)) {
+    if (/secret|key|password|token/i.test(k)) {
+      safe[k] = v ? 'SET (' + v.slice(0,6) + '...)' : 'EMPTY';
+    } else {
+      safe[k] = v || 'EMPTY';
+    }
+  }
+  res.json(safe);
 });
 
 app.get('/pricing', (req, res) => {
