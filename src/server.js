@@ -144,19 +144,6 @@ function requireGuest(req, res, next) {
 // -----------------------------------------------------------------------------
 // Auth routes (public)
 // -----------------------------------------------------------------------------
-// TEMP DEBUG — remove before launch
-app.get('/debug-env', (req, res) => {
-  const safe = {};
-  for (const [k, v] of Object.entries(process.env)) {
-    if (/secret|key|password|token/i.test(k)) {
-      safe[k] = v ? 'SET (' + v.slice(0,6) + '...)' : 'EMPTY';
-    } else {
-      safe[k] = v || 'EMPTY';
-    }
-  }
-  res.json(safe);
-});
-
 app.get('/pricing', (req, res) => {
   if (req.session.userId) return res.redirect('/dashboard');
   res.render('pricing', { title: 'Pricing — JustInvoice' });
