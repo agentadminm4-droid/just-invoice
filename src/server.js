@@ -469,6 +469,86 @@ app.post('/settings', requireAuth, (req, res) => {
   res.redirect('/settings');
 });
 
+// -----------------------------------------------------------------------------
+// Admin stats page
+// -----------------------------------------------------------------------------
+app.get('/admin/stats', (req, res) => {
+  const adminKey = process.env.ADMIN_KEY;
+  if (!adminKey) {
+    return res.status(403).send('403 Forbidden: ADMIN_KEY not configured');
+  }
+  if (req.query.key !== adminKey) {
+    return res.status(403).send('403 Forbidden: invalid key');
+  }
+
+  const sevenDaysAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString().slice(0, 19);
+
+  const totalUsers = db.prepare(`SELECT COUNT(*) AS n FROM users`).get().n;
+  const totalInvoices = db.prepare(`SELECT COUNT(*) AS n FROM invoices`).get().n;
+  const statusCounts = db.prepare(
+    `SELECT status, COUNT(*) AS n FROM invoices GROUP BY status`
+  ).all().reduce((acc, r) => { acc[r.status] = r.n; return acc; }, {});
+  const newUsers7d = db.prepare(
+    `SELECT COUNT(*) AS n FROM users WHERE created_at >= ?`
+  ).get(sevenDaysAgo).n;
+  const newInvoices7d = db.prepare(
+    `SELECT COUNT(*) AS n FROM invoices WHERE created_at >= ?`
+  ).get(sevenDaysAgo).n;
+  const latestSignup = db.prepare(
+    `SELECT created_at FROM users ORDER BY created_at DESC LIMIT 1`
+  ).get();
+
+  const draft = statusCounts.draft || 0;
+  const sent = statusCounts.sent || 0;
+  const paid = statusCounts.paid || 0;
+  const latestSignupDate = latestSignup ? latestSignup.created_at : 'N/A';
+  const generatedAt = new Date().toISOString();
+
+  res.send(`<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>JustInvoice — Admin Stats</title>
+  <style>
+    body { font-family: system-ui, sans-serif; max-width: 700px; margin: 40px auto; padding: 0 20px; color: #222; }
+    h1 { font-size: 1.5rem; margin-bottom: 4px; }
+    .subtitle { color: #666; font-size: 0.875rem; margin-bottom: 2rem; }
+    table { width: 100%; border-collapse: collapse; margin-bottom: 2rem; }
+    th { background: #f4f4f5; text-align: left; padding: 10px 12px; border: 1px solid #ddd; font-size: 0.875rem; text-transform: uppercase; letter-spacing: 0.04em; }
+    td { padding: 10px 12px; border: 1px solid #ddd; }
+    tr:nth-child(even) td { background: #fafafa; }
+    .section-title { font-weight: 600; font-size: 1rem; margin: 1.5rem 0 0.5rem; }
+    .generated { font-size: 0.8rem; color: #999; margin-top: 2rem; }
+  </style>
+</head>
+<body>
+  <h1>📊 JustInvoice Admin Stats</h1>
+  <div class="subtitle">Generated at ${generatedAt}</div>
+
+  <div class="section-title">Users</div>
+  <table>
+    <tr><th>Metric</th><th>Value</th></tr>
+    <tr><td>Total users registered</td><td>${totalUsers}</td></tr>
+    <tr><td>New users (last 7 days)</td><td>${newUsers7d}</td></tr>
+    <tr><td>Most recent signup</td><td>${latestSignupDate}</td></tr>
+  </table>
+
+  <div class="section-title">Invoices</div>
+  <table>
+    <tr><th>Metric</th><th>Value</th></tr>
+    <tr><td>Total invoices created</td><td>${totalInvoices}</td></tr>
+    <tr><td>New invoices (last 7 days)</td><td>${newInvoices7d}</td></tr>
+    <tr><td>Status: draft</td><td>${draft}</td></tr>
+    <tr><td>Status: sent</td><td>${sent}</td></tr>
+    <tr><td>Status: paid</td><td>${paid}</td></tr>
+  </table>
+
+  <div class="generated">JustInvoice admin — do not share this URL</div>
+</body>
+</html>`);
+});
+
 // Error handler
 app.use((err, req, res, next) => {
   console.error(err);
