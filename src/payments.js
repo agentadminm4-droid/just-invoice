@@ -18,8 +18,8 @@ function centsToStripeAmount(cents, currency) {
     : Math.round(cents);
 }
 
-async function createCheckoutSession(invoice, req) {
-  const stripe = getStripe();
+async function createCheckoutSession(invoice, req, stripeInstance) {
+  const stripe = stripeInstance || getStripe();
   if (!stripe) throw new Error('Stripe is not configured on this server');
   if (invoice.status === 'paid') throw new Error('Invoice is already paid');
   if (!invoice.items.length) throw new Error('Invoice has no line items');

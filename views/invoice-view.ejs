@@ -79,6 +79,11 @@
 
 <div class="card">
   <h3>Actions</h3>
+  <% if (!stripeConfiguredForUser) { %>
+    <p class="muted" style="margin:0 0 0.75rem; font-size:0.875rem;">
+      ⚠ Payment link disabled — <a href="/settings">add your Stripe key in Settings</a> to allow clients to pay online.
+    </p>
+  <% } %>
   <div class="actions">
     <% if (invoice.status === 'draft') { %>
       <a href="/invoices/<%= invoice.id %>/edit" class="btn secondary">Edit</a>

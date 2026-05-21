@@ -179,6 +179,7 @@ const DEFAULT_SETTINGS = {
   tax_name: 'HST',
   tax_rate: '0.13',
   tax_enabled: '0',
+  stripe_secret_key: '',
 };
 
 function seedUserSettings(userId, overrides = {}) {

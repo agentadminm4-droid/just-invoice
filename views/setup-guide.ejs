@@ -1,0 +1,125 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title><%= title %></title>
+  <link rel="stylesheet" href="/static/app.css">
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='6' fill='%232563eb'/><text x='16' y='23' font-size='20' text-anchor='middle' fill='white' font-family='system-ui' font-weight='bold'>J</text></svg>">
+  <style>
+    .setup-nav { display:flex; justify-content:space-between; align-items:center; padding:1rem 0; margin-bottom:2rem; border-bottom:1px solid var(--line); }
+    .setup-nav .logo { font-weight:800; font-size:1.1rem; text-decoration:none; color:var(--text); }
+    .setup-nav .logo span { color:#2563eb; }
+    .setup-step { display:flex; gap:1.25rem; margin-bottom:2rem; }
+    .step-badge { flex-shrink:0; width:2rem; height:2rem; border-radius:50%; background:#2563eb; color:#fff; font-weight:700; font-size:0.9rem; display:flex; align-items:center; justify-content:center; margin-top:0.2rem; }
+    .step-badge.optional { background:#6b7280; }
+    .step-body { flex:1; }
+    .step-body h3 { margin:0 0 0.4rem; font-size:1rem; }
+    .step-body p { margin:0 0 0.5rem; color:var(--muted); font-size:0.95rem; }
+    .step-body code { background:#f4f4f5; padding:0.1em 0.4em; border-radius:3px; font-size:0.875em; }
+    .optional-tag { display:inline-block; font-size:0.7rem; text-transform:uppercase; letter-spacing:0.05em; background:#f4f4f5; color:#6b7280; padding:0.1em 0.5em; border-radius:3px; vertical-align:middle; margin-left:0.4rem; }
+    .setup-footer { margin-top:3rem; padding-top:1.5rem; border-top:1px solid var(--line); font-size:0.875rem; color:var(--muted); }
+  </style>
+</head>
+<body>
+<div class="container" style="max-width:680px; padding:1.5rem 1rem;">
+
+  <nav class="setup-nav">
+    <a href="/" class="logo">Just<span>Invoice</span></a>
+    <div style="display:flex; gap:1rem; font-size:0.875rem;">
+      <a href="/login">Log in</a>
+      <a href="/signup" style="color:#2563eb; font-weight:600;">Sign up free</a>
+    </div>
+  </nav>
+
+  <h1 style="font-size:1.6rem; font-weight:800; letter-spacing:-0.02em; margin-bottom:0.25rem;">Getting Started</h1>
+  <p class="muted" style="margin-bottom:2.5rem;">Set up JustInvoice in a few minutes. Most steps are optional — start simple and add more as you need it.</p>
+
+  <!-- Step 1 -->
+  <div class="setup-step">
+    <div class="step-badge">1</div>
+    <div class="step-body">
+      <h3>Create your account</h3>
+      <p>Sign up at <a href="/signup">the signup page</a>. All you need is an email and password — no credit card required to get started.</p>
+    </div>
+  </div>
+
+  <!-- Step 2 -->
+  <div class="setup-step">
+    <div class="step-badge">2</div>
+    <div class="step-body">
+      <h3>Set up your business info</h3>
+      <p>Go to <a href="/settings">Settings</a> and fill in your business name, email, phone, and address. This info appears on every invoice you create.</p>
+      <p>Also set your <strong>invoice number prefix</strong> (e.g. <code>INV</code>, <code>ACME</code>) — invoices will be numbered like <code>INV-2025-0001</code>.</p>
+    </div>
+  </div>
+
+  <!-- Step 3 -->
+  <div class="setup-step">
+    <div class="step-badge">3</div>
+    <div class="step-body">
+      <h3>Configure sales tax <span class="optional-tag">optional</span></h3>
+      <p>In <a href="/settings">Settings → Sales tax</a>, enable your tax type (HST, GST, VAT, etc.) and enter the rate as a decimal.</p>
+      <p>Common rates: <code>0.05</code> = 5% GST, <code>0.13</code> = 13% Ontario HST, <code>0.20</code> = 20% UK VAT.</p>
+      <p>Once enabled, each new invoice will include a tax line automatically. You can also override per-invoice.</p>
+    </div>
+  </div>
+
+  <!-- Step 4 -->
+  <div class="setup-step">
+    <div class="step-badge optional">4</div>
+    <div class="step-body">
+      <h3>Enable online payments <span class="optional-tag">optional</span></h3>
+      <p>To let clients pay by card directly on the invoice, you need a <a href="https://stripe.com" target="_blank" rel="noopener">Stripe</a> account.</p>
+      <ol style="margin:0.5rem 0; padding-left:1.25rem; color:var(--muted); font-size:0.95rem;">
+        <li>Sign up or log in at <a href="https://dashboard.stripe.com" target="_blank" rel="noopener">dashboard.stripe.com</a></li>
+        <li>Go to <a href="https://dashboard.stripe.com/apikeys" target="_blank" rel="noopener">Developers → API keys</a></li>
+        <li>Copy your <strong>Secret key</strong> (starts with <code>sk_test_</code> or <code>sk_live_</code>)</li>
+        <li>Paste it into <a href="/settings">Settings → Payments (Stripe) → Your key</a></li>
+      </ol>
+      <p>Once set, a "Pay now" button will appear on your client-facing invoices. Stripe handles the payment — money goes directly to your Stripe account.</p>
+      <p><strong>Note:</strong> Start with a <code>sk_test_</code> key to test, switch to <code>sk_live_</code> for real payments.</p>
+    </div>
+  </div>
+
+  <!-- Step 5 -->
+  <div class="setup-step">
+    <div class="step-badge optional">5</div>
+    <div class="step-body">
+      <h3>Enable email sending <span class="optional-tag">optional</span></h3>
+      <p>JustInvoice can email invoices directly to your clients. Emails are sent from a shared sender address — great for getting started quickly.</p>
+      <p>Email sending is pre-configured on the hosted version. If you're self-hosting, set <code>RESEND_API_KEY</code> in your <code>.env</code> file (get a free key at <a href="https://resend.com" target="_blank" rel="noopener">resend.com</a>).</p>
+    </div>
+  </div>
+
+  <!-- Step 6 -->
+  <div class="setup-step">
+    <div class="step-badge">6</div>
+    <div class="step-body">
+      <h3>Create your first invoice</h3>
+      <p>Once your settings are saved:</p>
+      <ol style="margin:0.5rem 0; padding-left:1.25rem; color:var(--muted); font-size:0.95rem;">
+        <li>Go to your <a href="/dashboard">Dashboard</a> and click <strong>New invoice</strong></li>
+        <li>Enter your client's name and email</li>
+        <li>Add one or more line items with descriptions, quantities, and prices</li>
+        <li>Set issue and due dates, then hit <strong>Save</strong></li>
+        <li>From the invoice view, either <strong>Email to client</strong> or copy the <strong>share link</strong></li>
+      </ol>
+      <p>Your client gets a clean, professional invoice page where they can download the PDF and (if you've set up Stripe) pay online.</p>
+    </div>
+  </div>
+
+  <div class="card" style="background:#f0f7ff; border-color:#bfdbfe;">
+    <p style="margin:0; font-size:0.95rem;">
+      <strong>That's it.</strong> Most freelancers are fully set up in under 5 minutes.
+      If something's not working, check your <a href="/settings">Settings</a> page for status indicators on each feature.
+    </p>
+  </div>
+
+  <div class="setup-footer">
+    <a href="/">&larr; Back to home</a> &nbsp;·&nbsp; <a href="/signup">Create account</a> &nbsp;·&nbsp; <a href="/login">Log in</a>
+  </div>
+
+</div>
+</body>
+</html>

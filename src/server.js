@@ -13,13 +13,13 @@ const express = require('express');
 const session = require('express-session');
 const SQLiteStore = require('connect-sqlite3')(session);
 
-const { db, allSettings, writeSetting } = require('./db');
+const { db, allSettings, readSetting, writeSetting } = require('./db');
 const invoicesLib = require('./invoices');
 const usersLib = require('./users');
 const { toCents, formatMoney, fromCents, lineTotal, invoiceTotal } = require('./money');
 const pdfLib = require('./pdf');
 const paymentsLib = require('./payments');
-const { getStripe, isConfigured: stripeConfigured, isWebhookConfigured } = require('./stripe-client');
+const { getStripe, getStripeForUser, isConfigured: stripeConfigured, isWebhookConfigured } = require('./stripe-client');
 const mailer = require('./mailer');
 const { isConfigured: emailConfigured } = require('./email-client');
 
@@ -149,6 +149,10 @@ app.get('/pricing', (req, res) => {
   res.render('pricing', { title: 'Pricing — JustInvoice' });
 });
 
+app.get('/setup', (req, res) => {
+  res.render('setup-guide', { title: 'Setup Guide — JustInvoice' });
+});
+
 app.get('/signup', requireGuest, (req, res) => {
   res.render('signup', { title: 'Sign up — JustInvoice', error: req.query.error || null, email: req.query.email || '' });
 });
@@ -209,25 +213,27 @@ app.get('/i/:token', (req, res) => {
   const taxCfg = getOwnerTaxConfig(invoice.user_id);
   const invoiceWithTax = invoicesLib.getInvoiceByToken(req.params.token, taxCfg?.rate ?? null, taxCfg?.name ?? null);
   const ownerSettings = allSettings(invoice.user_id);
-  res.render('invoice-public', { invoice: invoiceWithTax, settings: ownerSettings });
+  const stripeConfiguredForUser = Boolean(getStripeForUser(invoice.user_id));
+  res.render('invoice-public', { invoice: invoiceWithTax, settings: ownerSettings, stripeConfiguredForUser });
 });
 
 app.post('/i/:token/pay', async (req, res, next) => {
   try {
-    if (!stripeConfigured()) {
-      return res.status(503).render('error', {
-        message: 'Online payment is not configured on this invoice. Please contact the sender.',
-      });
-    }
     const invoice = invoicesLib.getInvoiceByToken(req.params.token, null, null);
     if (!invoice) return res.status(404).render('error', { message: 'Invoice not found' });
+    const userStripe = getStripeForUser(invoice.user_id);
+    if (!userStripe) {
+      return res.status(503).render('error', {
+        message: 'No Stripe key configured. Add your Stripe secret key in Settings to enable payments.',
+      });
+    }
     if (invoice.status === 'paid') {
       return res.redirect(`/i/${invoice.public_token}/paid`);
     }
     // Re-fetch with owner's tax config for the Stripe session
     const taxCfg = getOwnerTaxConfig(invoice.user_id);
     const invoiceWithTax = invoicesLib.getInvoiceByToken(req.params.token, taxCfg?.rate ?? null, taxCfg?.name ?? null);
-    const stripeSession = await paymentsLib.createCheckoutSession(invoiceWithTax, req);
+    const stripeSession = await paymentsLib.createCheckoutSession(invoiceWithTax, req, userStripe);
     res.redirect(303, stripeSession.url);
   } catch (err) { next(err); }
 });
@@ -333,7 +339,8 @@ app.get('/invoices/:id', requireAuth, (req, res) => {
     sent: req.query.sent === '1',
     error: req.query.error ? String(req.query.error).slice(0, 300) : null,
   };
-  res.render('invoice-view', { invoice, shareUrl, flash });
+  const stripeConfiguredForUser = Boolean(getStripeForUser(req.session.userId));
+  res.render('invoice-view', { invoice, shareUrl, flash, stripeConfiguredForUser });
 });
 
 app.post('/invoices/:id/status', requireAuth, (req, res) => {
@@ -466,6 +473,10 @@ app.post('/settings', requireAuth, (req, res) => {
   writeSetting(req.session.userId, 'tax_name', String(req.body.tax_name || 'Tax').trim().slice(0, 20));
   writeSetting(req.session.userId, 'tax_rate', String(req.body.tax_rate || '0'));
   writeSetting(req.session.userId, 'tax_enabled', req.body.tax_enabled === '1' ? '1' : '0');
+  // Per-user Stripe key (only update if field was submitted)
+  if (Object.prototype.hasOwnProperty.call(req.body, 'stripe_secret_key')) {
+    writeSetting(req.session.userId, 'stripe_secret_key', String(req.body.stripe_secret_key || '').trim());
+  }
   res.redirect('/settings');
 });
 

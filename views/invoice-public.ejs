@@ -90,10 +90,12 @@
       <% } %>
 
       <div class="actions" style="margin-top:1.5rem;">
-        <% if (stripeConfigured && invoice.status !== 'paid') { %>
+        <% if (stripeConfiguredForUser && invoice.status !== 'paid') { %>
           <form method="post" action="/i/<%= invoice.public_token %>/pay" style="display:inline;">
             <button type="submit">Pay <%= formatMoney(invoice.total_cents, invoice.currency) %> now</button>
           </form>
+        <% } else if (!stripeConfiguredForUser && invoice.status !== 'paid') { %>
+          <span class="muted" style="font-size:0.875rem;">Payment link unavailable</span>
         <% } %>
         <a href="/i/<%= invoice.public_token %>/pdf" class="btn secondary" target="_blank">Download PDF</a>
       </div>
