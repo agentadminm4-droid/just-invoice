@@ -149,6 +149,9 @@ app.get('/pricing', (req, res) => {
   res.render('pricing', { title: 'Pricing — JustInvoice' });
 });
 
+app.get('/terms', (req, res) => res.render('terms'));
+app.get('/privacy', (req, res) => res.render('privacy'));
+
 app.get('/setup', (req, res) => {
   res.render('setup-guide', { title: 'Setup Guide — JustInvoice' });
 });
