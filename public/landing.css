@@ -335,6 +335,70 @@ details[open] summary::after { content: '−'; }
 .pricing-page-hero h1 { font-size: 2.25rem; font-weight: 800; letter-spacing: -0.02em; margin-bottom: 0.75rem; }
 .pricing-page-hero p { color: var(--muted); font-size: 1.1rem; }
 
+/* ── Screenshots section ─────────────────────────────── */
+.section-screenshots-wrap {
+  background: var(--bg-alt);
+  padding: 5rem 0;
+}
+.section-screenshots-wrap .section-label,
+.section-screenshots-wrap .section-title {
+  padding-left: 1.5rem;
+  padding-right: 1.5rem;
+  max-width: 960px;
+  margin-left: auto;
+  margin-right: auto;
+  display: block;
+}
+.section-screenshots-wrap .section-sub {
+  padding-left: 1.5rem;
+  padding-right: 1.5rem;
+  max-width: 960px;
+  margin-left: auto;
+  margin-right: auto;
+  margin-bottom: 2.5rem;
+}
+.screenshots-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1.5rem;
+  max-width: 1120px;
+  margin: 0 auto;
+  padding: 0 1.5rem;
+}
+.screenshot-item {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+.screenshot-frame {
+  border-radius: 10px;
+  overflow: hidden;
+  border: 1px solid var(--border);
+  box-shadow: 0 2px 8px rgba(0,0,0,.08), 0 8px 24px rgba(0,0,0,.06);
+  background: #fff;
+  aspect-ratio: 3 / 2;
+  line-height: 0;
+  transition: transform .2s, box-shadow .2s;
+}
+.screenshot-frame:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 6px 20px rgba(0,0,0,.12), 0 16px 40px rgba(0,0,0,.08);
+}
+.screenshot-frame img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: top left;
+  display: block;
+}
+.screenshot-caption {
+  text-align: center;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--muted);
+  letter-spacing: 0.01em;
+}
+
 /* ── Responsive ──────────────────────────────────────── */
 @media (max-width: 640px) {
   .hero { padding: 4rem 1.25rem 3rem; }
@@ -342,4 +406,6 @@ details[open] summary::after { content: '−'; }
   .pricing-card { padding: 2rem 1.5rem; }
   .landing-footer-inner { flex-direction: column; text-align: center; }
   .landing-footer nav { justify-content: center; }
+  .screenshots-grid { grid-template-columns: 1fr; gap: 1.25rem; }
+  .section-screenshots-wrap { padding: 3.5rem 0; }
 }
