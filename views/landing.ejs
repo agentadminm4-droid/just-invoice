@@ -5,6 +5,62 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title><%= title %></title>
   <link rel="stylesheet" href="/static/landing.css">
+  <style>
+    /* ── Lightbox ── */
+    .screenshot-frame {
+      cursor: zoom-in;
+    }
+    .screenshot-hint {
+      font-size: 0.75rem;
+      color: var(--muted, #888);
+      margin-top: 0.35rem;
+      text-align: center;
+    }
+    #lightbox-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      z-index: 9999;
+      background: rgba(0, 0, 0, 0.88);
+      align-items: center;
+      justify-content: center;
+      cursor: zoom-out;
+    }
+    #lightbox-overlay.active {
+      display: flex;
+    }
+    #lightbox-img {
+      max-width: 92vw;
+      max-height: 88vh;
+      border-radius: 8px;
+      box-shadow: 0 8px 48px rgba(0,0,0,0.6);
+      object-fit: contain;
+      cursor: default;
+      user-select: none;
+    }
+    #lightbox-close {
+      position: fixed;
+      top: 18px;
+      right: 22px;
+      background: rgba(255,255,255,0.15);
+      border: none;
+      color: #fff;
+      font-size: 1.6rem;
+      line-height: 1;
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background 0.15s;
+      z-index: 10000;
+    }
+    #lightbox-close:hover {
+      background: rgba(255,255,255,0.3);
+    }
+  </style>
   <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='6' fill='%232563eb'/><text x='16' y='23' font-size='20' text-anchor='middle' fill='white' font-family='system-ui' font-weight='bold'>J</text></svg>">
 </head>
 <body>
@@ -119,31 +175,34 @@
   <p class="section-sub">Clean interfaces, no clutter. Here's what your workflow looks like.</p>
   <div class="screenshots-grid">
     <div class="screenshot-item">
-      <div class="screenshot-frame">
+      <div class="screenshot-frame" onclick="openLightbox(this)">
         <img src="/static/images/screenshots/invoice-preview.png"
              alt="Clean invoice builder"
              loading="lazy"
              width="1200" height="800">
       </div>
       <p class="screenshot-caption">Clean invoice builder</p>
+      <p class="screenshot-hint">Click to enlarge</p>
     </div>
     <div class="screenshot-item">
-      <div class="screenshot-frame">
+      <div class="screenshot-frame" onclick="openLightbox(this)">
         <img src="/static/images/screenshots/dashboard.png"
              alt="Track all your invoices"
              loading="lazy"
              width="1200" height="800">
       </div>
       <p class="screenshot-caption">Track all your invoices</p>
+      <p class="screenshot-hint">Click to enlarge</p>
     </div>
     <div class="screenshot-item">
-      <div class="screenshot-frame">
+      <div class="screenshot-frame" onclick="openLightbox(this)">
         <img src="/static/images/screenshots/settings.png"
              alt="Simple setup"
              loading="lazy"
              width="1200" height="800">
       </div>
       <p class="screenshot-caption">Simple setup</p>
+      <p class="screenshot-hint">Click to enlarge</p>
     </div>
   </div>
 </section>
@@ -284,6 +343,56 @@
     <small>&copy; <%= new Date().getFullYear() %> JustInvoice. Built for freelancers.</small>
   </div>
 </footer>
+
+<!-- ── Lightbox overlay ── -->
+<div id="lightbox-overlay" role="dialog" aria-modal="true" aria-label="Image lightbox">
+  <button id="lightbox-close" aria-label="Close lightbox">&#x2715;</button>
+  <img id="lightbox-img" src="" alt="">
+</div>
+
+<script>
+  (function () {
+    var overlay = document.getElementById('lightbox-overlay');
+    var img     = document.getElementById('lightbox-img');
+    var btn     = document.getElementById('lightbox-close');
+
+    function openLightbox(frame) {
+      var source = frame.querySelector('img');
+      if (!source) return;
+      img.src = source.src;
+      img.alt = source.alt;
+      overlay.classList.add('active');
+      document.body.style.overflow = 'hidden';
+    }
+
+    function closeLightbox() {
+      overlay.classList.remove('active');
+      document.body.style.overflow = '';
+      img.src = '';
+    }
+
+    // Expose openLightbox globally for inline onclick handlers
+    window.openLightbox = openLightbox;
+
+    // Close on overlay click (but not on the image itself)
+    overlay.addEventListener('click', function (e) {
+      if (e.target !== img) closeLightbox();
+    });
+
+    // Close button
+    btn.addEventListener('click', function (e) {
+      e.stopPropagation();
+      closeLightbox();
+    });
+
+    // Close on Escape key
+    document.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape' && overlay.classList.contains('active')) {
+        closeLightbox();
+      }
+    });
+  })();
+</script>
 
 </body>
 </html>
