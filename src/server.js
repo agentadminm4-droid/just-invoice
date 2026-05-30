@@ -21,7 +21,8 @@ const pdfLib = require('./pdf');
 const paymentsLib = require('./payments');
 const { getStripe, getStripeForUser, isConfigured: stripeConfigured, isWebhookConfigured } = require('./stripe-client');
 const mailer = require('./mailer');
-const { isConfigured: emailConfigured } = require('./email-client');
+const emailClient = require('./email-client');
+const { isConfigured: emailConfigured } = emailClient;
 
 // Helper: get tax config { rate, name } for a user. Returns null if tax is disabled.
 function getOwnerTaxConfig(userId) {
@@ -570,6 +571,69 @@ app.get('/admin/stats', (req, res) => {
   <div class="generated">JustInvoice admin — do not share this URL</div>
 </body>
 </html>`);
+});
+
+// ── Password reset ──────────────────────────────────────────────────────────
+app.get('/forgot-password', (req, res) => {
+  res.render('forgot-password', { title: 'Reset your password', message: null, error: null });
+});
+
+app.post('/forgot-password', async (req, res) => {
+  const { email } = req.body;
+  try {
+    const result = usersLib.createResetToken(email);
+    if (result) {
+      const resetUrl = `${process.env.BASE_URL}/reset-password/${result.token}`;
+      const resend = emailClient.getResend();
+      if (resend) {
+        await resend.emails.send({
+          from: emailClient.fromAddress('JustInvoice'),
+          to: [result.email],
+          subject: 'Reset your JustInvoice password',
+          text: `Click the link below to reset your password (valid for 1 hour):\n\n${resetUrl}\n\nIf you didn't request this, you can ignore this email.`,
+          html: `<p>Hi,</p><p>Click the link below to reset your JustInvoice password. This link is valid for 1 hour.</p><p><a href="${resetUrl}">${resetUrl}</a></p><p>If you didn't request this, you can safely ignore this email.</p>`,
+        });
+      }
+    }
+  } catch (e) {
+    // swallow errors — always show same message
+  }
+  res.render('forgot-password', {
+    title: 'Reset your password',
+    message: "If that email is registered, you'll receive a reset link shortly.",
+    error: null,
+  });
+});
+
+app.get('/reset-password/:token', (req, res) => {
+  const rec = usersLib.getResetToken(req.params.token);
+  if (!rec) {
+    return res.render('reset-password', {
+      title: 'Reset your password',
+      token: req.params.token,
+      error: 'This reset link is invalid or has expired. Please request a new one.',
+      success: false,
+    });
+  }
+  res.render('reset-password', { title: 'Reset your password', token: req.params.token, error: null, success: false });
+});
+
+app.post('/reset-password/:token', async (req, res) => {
+  const { password, passwordConfirm } = req.body;
+  if (password !== passwordConfirm) {
+    return res.render('reset-password', {
+      title: 'Reset your password',
+      token: req.params.token,
+      error: "Passwords don't match.",
+      success: false,
+    });
+  }
+  try {
+    await usersLib.resetPassword(req.params.token, password);
+    res.render('reset-password', { title: 'Reset your password', token: req.params.token, error: null, success: true });
+  } catch (e) {
+    res.render('reset-password', { title: 'Reset your password', token: req.params.token, error: e.message, success: false });
+  }
 });
 
 // Error handler
