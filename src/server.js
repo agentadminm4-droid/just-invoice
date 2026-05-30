@@ -486,6 +486,15 @@ app.post('/settings', requireAuth, (req, res) => {
 // -----------------------------------------------------------------------------
 // Admin stats page
 // -----------------------------------------------------------------------------
+app.get('/admin/users', (req, res) => {
+  const adminKey = process.env.ADMIN_KEY;
+  if (!adminKey) return res.status(403).send('403 Forbidden: ADMIN_KEY not configured');
+  if (req.query.key !== adminKey) return res.status(403).send('403 Forbidden: invalid key');
+
+  const users = db.prepare(`SELECT id, email, name, created_at FROM users ORDER BY created_at DESC`).all();
+  res.json(users);
+});
+
 app.get('/admin/stats', (req, res) => {
   const adminKey = process.env.ADMIN_KEY;
   if (!adminKey) {
