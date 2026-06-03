@@ -86,9 +86,9 @@
           <tr>
             <td style="padding:1rem 2rem 2rem; border-top:1px solid #e5e5e3; color:#666; font-size:12px; line-height:1.5;">
               <strong><%= settings.business_name %></strong><br>
-              <% if (settings.business_address) { %><span style="white-space:pre-line;"><%= settings.business_address %></span><br><% } %>
-              <% if (settings.business_phone) { %><%= settings.business_phone %><br><% } %>
-              <% if (settings.business_email) { %><%= settings.business_email %><% } %>
+              <% if (settings.business_address) { %><strong>Address:</strong> <span style="white-space:pre-line;"><%= settings.business_address %></span><br><% } %>
+              <% if (settings.business_phone) { %><strong>Tel:</strong> <%= settings.business_phone %><br><% } %>
+              <% if (settings.business_email) { %><strong>Email:</strong> <%= settings.business_email %><% } %>
             </td>
           </tr>
         </table>
