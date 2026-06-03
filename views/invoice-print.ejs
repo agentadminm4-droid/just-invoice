@@ -36,14 +36,14 @@
       <div class="num">#<%= invoice.number %></div>
     </div>
     <div class="business">
-      <strong><%= settings.business_name %></strong><br>
-      <span class="muted"><%= settings.business_email %></span>
-      <% if (settings.business_phone) { %>
-        <br><span class="muted"><%= settings.business_phone %></span>
-      <% } %>
+      <strong><%= settings.business_name %></strong>
       <% if (settings.business_address) { %>
         <br><span class="muted"><%= settings.business_address %></span>
       <% } %>
+      <% if (settings.business_phone) { %>
+        <br><span class="muted"><%= settings.business_phone %></span>
+      <% } %>
+      <br><span class="muted"><%= settings.business_email %></span>
     </div>
   </div>
 

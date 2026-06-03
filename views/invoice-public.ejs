@@ -15,14 +15,14 @@
           <p class="muted" style="margin:0.25rem 0 0;">#<%= invoice.number %></p>
         </div>
         <div style="text-align:right;">
-          <strong><%= settings.business_name %></strong><br>
-          <span class="muted"><%= settings.business_email %></span>
-          <% if (settings.business_phone) { %>
-            <br><span class="muted"><%= settings.business_phone %></span>
-          <% } %>
+          <strong><%= settings.business_name %></strong>
           <% if (settings.business_address) { %>
             <br><span class="muted" style="white-space:pre-line;"><%= settings.business_address %></span>
           <% } %>
+          <% if (settings.business_phone) { %>
+            <br><span class="muted"><%= settings.business_phone %></span>
+          <% } %>
+          <br><span class="muted"><%= settings.business_email %></span>
         </div>
       </div>
 
