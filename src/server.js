@@ -280,6 +280,53 @@ app.get('/i/:token/pdf', async (req, res, next) => {
 });
 
 // -----------------------------------------------------------------------------
+// SEO routes
+// -----------------------------------------------------------------------------
+app.get('/robots.txt', (req, res) => {
+  res.type('text/plain');
+  res.send(`User-agent: *
+Allow: /
+Disallow: /dashboard
+Disallow: /invoices
+Disallow: /settings
+Disallow: /logout
+Sitemap: https://getjustinvoice.app/sitemap.xml
+`);
+});
+
+app.get('/sitemap.xml', (req, res) => {
+  res.type('application/xml');
+  res.send(`<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url>
+    <loc>https://getjustinvoice.app/</loc>
+    <changefreq>weekly</changefreq>
+    <priority>1.0</priority>
+  </url>
+  <url>
+    <loc>https://getjustinvoice.app/pricing</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://getjustinvoice.app/signup</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://getjustinvoice.app/privacy</loc>
+    <changefreq>yearly</changefreq>
+    <priority>0.3</priority>
+  </url>
+  <url>
+    <loc>https://getjustinvoice.app/terms</loc>
+    <changefreq>yearly</changefreq>
+    <priority>0.3</priority>
+  </url>
+</urlset>
+`);
+});
+
 // Authenticated app routes
 // -----------------------------------------------------------------------------
 app.get('/', (req, res) => {
