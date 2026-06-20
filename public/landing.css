@@ -408,4 +408,62 @@ details[open] summary::after { content: '−'; }
   .landing-footer nav { justify-content: center; }
   .screenshots-grid { grid-template-columns: 1fr; gap: 1.25rem; }
   .section-screenshots-wrap { padding: 3.5rem 0; }
+  .testimonials-grid { grid-template-columns: 1fr; }
 }
+
+/* ── Social proof / testimonials ─────────────────────── */
+.testimonials-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1.5rem;
+  max-width: 1100px;
+  margin: 2rem auto 0;
+}
+.testimonial-card {
+  background: #fff;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1.5rem;
+  box-shadow: var(--shadow);
+  text-align: left;
+}
+.testimonial-quote {
+  font-size: 0.95rem;
+  color: var(--ink);
+  line-height: 1.55;
+  margin-bottom: 1rem;
+  font-style: italic;
+}
+.testimonial-quote::before {
+  content: '"';
+  color: var(--blue);
+  font-size: 1.4rem;
+  font-weight: 700;
+  margin-right: 2px;
+}
+.testimonial-quote::after {
+  content: '"';
+  color: var(--blue);
+  font-size: 1.4rem;
+  font-weight: 700;
+  margin-left: 2px;
+}
+.testimonial-meta {
+  font-size: 0.8rem;
+  color: var(--muted);
+  border-top: 1px solid var(--border);
+  padding-top: 0.75rem;
+}
+.testimonial-meta strong { color: var(--ink); }
+.beta-counter {
+  text-align: center;
+  margin-top: 2.5rem;
+  font-size: 0.9rem;
+  color: var(--muted);
+}
+.beta-counter strong { color: var(--ink); }
+#user-count, #early-access-count, #last-invoice-time {
+  font-weight: 600;
+  color: var(--blue);
+}
+

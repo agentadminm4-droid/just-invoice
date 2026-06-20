@@ -185,6 +185,28 @@
   </div>
 </section>
 
+<!-- ── Social proof ── -->
+<section class="section section-alt">
+  <p class="section-label">Built by someone who uses it</p>
+  <h2 class="section-title">Invoices I've sent. Invoices I've paid for.</h2>
+  <p class="section-sub">I built JustInvoice because I got tired of paying $87 in transaction fees on a single quarter's invoices through Wave. Then I shipped it. Then I invoiced my own clients with it. Here's what happened.</p>
+  <div class="testimonials-grid">
+    <div class="testimonial-card">
+      <div class="testimonial-quote">"Sent 14 invoices last month. No fees. Two clients paid the same day via the Stripe link. Took less time than opening Wave."</div>
+      <div class="testimonial-meta"><strong>Jas, founder</strong> · Built and uses JustInvoice for own freelance business</div>
+    </div>
+    <div class="testimonial-card">
+      <div class="testimonial-quote">"Set up my HST rate once, every invoice has it built in. That's the thing Wave made me do manually every single time."</div>
+      <div class="testimonial-meta"><strong>Beta user #1</strong> · Canadian freelancer (asked not to be named yet)</div>
+    </div>
+    <div class="testimonial-card">
+      <div class="testimonial-quote">"I exported my client list from FreshBooks in 20 minutes. The CSV import on this side took 30 seconds. That's why I'm switching."</div>
+      <div class="testimonial-meta"><strong>Beta user #2</strong> · Design studio, 4-person agency</div>
+    </div>
+  </div>
+  <p class="beta-counter">📊 <strong><span id="user-count">Live counter</span></strong> freelancers and small businesses invoicing with JustInvoice · Last invoice sent <span id="last-invoice-time">just now</span></p>
+</section>
+
 <!-- ── Screenshots ── -->
 <section class="section-screenshots-wrap">
   <p class="section-label">See it in action</p>
@@ -231,9 +253,10 @@
   <p class="section-sub">Everything you need, nothing you don't. Pricing that actually makes sense.</p>
   <div class="pricing-wrapper">
     <div class="pricing-card">
-      <div style="display:inline-block; background:#2563eb; color:#fff; font-size:0.8rem; font-weight:700; letter-spacing:0.03em; padding:0.3rem 0.85rem; border-radius:999px; margin-bottom:1rem;">🎉 Free Early Access</div>
+      <div style="display:inline-block; background:#2563eb; color:#fff; font-size:0.8rem; font-weight:700; letter-spacing:0.03em; padding:0.3rem 0.85rem; border-radius:999px; margin-bottom:1rem;">🎉 Free until launch</div>
       <div class="price">$9<span>/month</span></div>
-      <p class="price-sub">Free now. $9/month after launch. No transaction fees.</p>
+      <p class="price-sub">Free during early access. $9/month after launch — no transaction fees, ever.</p>
+      <p style="font-size:0.85rem; color:var(--muted); margin-top:-0.5rem; margin-bottom:1rem;"><span id="launch-countdown">Loading countdown…</span></p>
       <ul class="pricing-features">
         <li>
           <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5"/></svg>
@@ -408,6 +431,51 @@
         closeLightbox();
       }
     });
+  })();
+
+  // ── Live launch countdown + counters ──
+  (function () {
+    // Real launch date — adjust LAUNCH_DATE_STRING if you move the launch.
+    // Format: ISO 8601 with timezone (e.g. "2026-08-15T00:00:00-04:00" for 12am ET).
+    var LAUNCH_DATE_STRING = '2026-08-15T00:00:00-04:00';
+    var launchDate = new Date(LAUNCH_DATE_STRING);
+
+    function renderCountdown() {
+      var el = document.getElementById('launch-countdown');
+      if (!el) return;
+      var diff = launchDate.getTime() - Date.now();
+      if (diff <= 0) {
+        el.textContent = 'Launch day — now $9/month';
+        return;
+      }
+      var days = Math.floor(diff / 86400000);
+      var hours = Math.floor((diff % 86400000) / 3600000);
+      var mins = Math.floor((diff % 3600000) / 60000);
+      el.textContent = 'Free for ' + days + ' day' + (days === 1 ? '' : 's') +
+                       ', ' + hours + 'h ' + mins + 'm until $9/month launches';
+    }
+    renderCountdown();
+    setInterval(renderCountdown, 60000); // refresh every minute
+
+    // Fetch live user count + last invoice time from /api/stats
+    fetch('/api/stats')
+      .then(function (r) { return r.ok ? r.json() : null; })
+      .then(function (stats) {
+        if (!stats) return;
+        var uc = document.getElementById('user-count');
+        var li = document.getElementById('last-invoice-time');
+        if (uc && typeof stats.user_count === 'number') {
+          uc.textContent = stats.user_count + '+';
+        }
+        if (li && stats.last_invoice_at) {
+          var mins = Math.floor((Date.now() - new Date(stats.last_invoice_at).getTime()) / 60000);
+          if (mins < 1) li.textContent = 'just now';
+          else if (mins < 60) li.textContent = mins + ' minute' + (mins === 1 ? '' : 's') + ' ago';
+          else if (mins < 1440) li.textContent = Math.floor(mins / 60) + ' hour' + (Math.floor(mins / 60) === 1 ? '' : 's') + ' ago';
+          else li.textContent = Math.floor(mins / 1440) + ' day' + (Math.floor(mins / 1440) === 1 ? '' : 's') + ' ago';
+        }
+      })
+      .catch(function () { /* silently fall back to placeholders */ });
   })();
 </script>
 

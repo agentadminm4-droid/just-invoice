@@ -329,6 +329,28 @@ app.get('/sitemap.xml', (req, res) => {
 
 // Authenticated app routes
 // -----------------------------------------------------------------------------
+// -----------------------------------------------------------------------------
+// Public stats endpoint for landing-page social proof counters
+// Returns: { user_count, last_invoice_at }
+// Cache: 60s — counters don't need to be perfectly live, and this gets hit on
+// every landing-page load. Avoids hammering SQLite.
+// -----------------------------------------------------------------------------
+app.get('/api/stats', (req, res) => {
+  try {
+    const userCount = db.prepare('SELECT COUNT(*) AS n FROM users').get().n;
+    const lastInvoice = db.prepare(
+      "SELECT created_at FROM invoices ORDER BY created_at DESC LIMIT 1"
+    ).get();
+    res.set('Cache-Control', 'public, max-age=60');
+    res.json({
+      user_count: userCount,
+      last_invoice_at: lastInvoice ? lastInvoice.created_at : null,
+    });
+  } catch (err) {
+    res.status(500).json({ error: 'stats unavailable' });
+  }
+});
+
 app.get('/', (req, res) => {
   if (req.session.userId) return res.redirect('/dashboard');
   res.render('landing', { title: 'JustInvoice — Flat-rate invoicing for freelancers' });
