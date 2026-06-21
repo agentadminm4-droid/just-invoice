@@ -150,6 +150,15 @@ app.get('/pricing', (req, res) => {
   res.render('pricing', { title: 'Pricing — JustInvoice' });
 });
 
+// Comparison blog — public SEO landing page targeting "Wave alternative" /
+// "FreshBooks alternative" search queries. Serves the long-form article.
+app.get('/compare/justinvoice-vs-wave-vs-freshbooks', (req, res) => {
+  if (req.session.userId) return res.redirect('/dashboard');
+  res.render('compare-vs-wave-freshbooks', {
+    title: 'JustInvoice vs Wave vs FreshBooks — 2026 Cost Comparison for Freelancers | JustInvoice',
+  });
+});
+
 app.get('/terms', (req, res) => res.render('terms'));
 app.get('/privacy', (req, res) => res.render('privacy'));
 
@@ -312,6 +321,11 @@ app.get('/sitemap.xml', (req, res) => {
     <loc>https://getjustinvoice.app/signup</loc>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://getjustinvoice.app/compare/justinvoice-vs-wave-vs-freshbooks</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
   </url>
   <url>
     <loc>https://getjustinvoice.app/privacy</loc>
