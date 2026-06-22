@@ -43,7 +43,15 @@
           <td><a href="/invoices/<%= inv.id %>"><%= inv.number %></a></td>
           <td><%= inv.client_name %></td>
           <td><%= inv.due_date %></td>
-          <td><span class="badge <%= inv.status %>"><%= inv.status %></span></td>
+          <td>
+            <span class="badge <%= inv.status %>"><%= inv.status %></span>
+            <% if (inv.status === 'sent' && (userSettings.default_payment_mode === 'etransfer' || userSettings.default_payment_mode === 'both')) { %>
+              <form method="post" action="/invoices/<%= inv.id %>/mark-paid" style="display:inline; margin-left:0.5rem;">
+                <input type="hidden" name="payment_method" value="etransfer">
+                <button type="submit" style="font-size:0.75rem; padding:0.2rem 0.6rem; background:#16a34a; color:#fff; border:none; border-radius:4px; cursor:pointer; white-space:nowrap;">Mark paid</button>
+              </form>
+            <% } %>
+          </td>
           <td class="num"><%= formatMoney(inv.total_cents, inv.currency) %></td>
         </tr>
       <% }) %>

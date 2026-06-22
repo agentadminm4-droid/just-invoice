@@ -89,18 +89,55 @@
         </div>
       <% } %>
 
-      <div class="actions" style="margin-top:1.5rem;">
-        <% if (stripeConfiguredForUser && invoice.status !== 'paid') { %>
-          <form method="post" action="/i/<%= invoice.public_token %>/pay" style="display:inline;">
-            <button type="submit">Pay <%= formatMoney(invoice.total_cents, invoice.currency) %> now</button>
-          </form>
-        <% } else if (!stripeConfiguredForUser && invoice.status !== 'paid') { %>
-          <span class="muted" style="font-size:0.875rem;">Payment link unavailable</span>
-        <% } %>
-        <a href="/i/<%= invoice.public_token %>/pdf" class="btn secondary" target="_blank">Download PDF</a>
-      </div>
       <% if (invoice.status === 'paid') { %>
+        <div class="actions" style="margin-top:1.5rem;">
+          <a href="/i/<%= invoice.public_token %>/pdf" class="btn secondary" target="_blank">Download PDF</a>
+        </div>
         <p class="muted" style="margin-top:1rem;">✓ This invoice has been paid. Thank you!</p>
+      <% } else { %>
+        <% const payMode = settings.default_payment_mode || 'stripe'; %>
+        <% if (payMode === 'etransfer') { %>
+          <div class="how-to-pay" style="background:var(--blue-light,#eff6ff); border-left:4px solid var(--blue,#3b82f6); padding:1.25rem 1.5rem; margin-top:2rem; border-radius:0 6px 6px 0;">
+            <h3 style="margin:0 0 0.75rem;">How to pay</h3>
+            <p style="margin:0 0 0.75rem;">
+              <%= settings.etransfer_instructions || ('Please send e-Transfer to ' + settings.etransfer_email + '. Include invoice number ' + invoice.number + ' in the memo.') %>
+            </p>
+            <p style="font-size:0.85rem; color:var(--muted,#666); margin:0;">
+              Once you&rsquo;ve sent the e-Transfer, the invoice will be marked paid once <%= settings.business_name %> confirms receipt.
+            </p>
+          </div>
+          <div class="actions" style="margin-top:1.5rem;">
+            <a href="/i/<%= invoice.public_token %>/pdf" class="btn secondary" target="_blank">Download PDF</a>
+          </div>
+        <% } else if (payMode === 'both') { %>
+          <div class="how-to-pay" style="background:var(--blue-light,#eff6ff); border-left:4px solid var(--blue,#3b82f6); padding:1.25rem 1.5rem; margin-top:2rem; border-radius:0 6px 6px 0;">
+            <% if (stripeConfiguredForUser) { %>
+              <p style="margin:0 0 0.5rem;"><strong>Option 1: Pay by card</strong></p>
+              <form method="post" action="/i/<%= invoice.public_token %>/pay" style="display:inline;">
+                <button type="submit" style="margin-bottom:1.25rem;">Pay <%= formatMoney(invoice.total_cents, invoice.currency) %> now</button>
+              </form>
+            <% } %>
+            <p style="margin:0 0 0.5rem;"><strong><%= stripeConfiguredForUser ? 'Option 2: Pay by e-Transfer' : 'Pay by e-Transfer' %></strong></p>
+            <p style="margin:0;">
+              <%= settings.etransfer_instructions || ('Please send e-Transfer to ' + settings.etransfer_email + '. Include invoice number ' + invoice.number + ' in the memo.') %>
+            </p>
+          </div>
+          <div class="actions" style="margin-top:1.5rem;">
+            <a href="/i/<%= invoice.public_token %>/pdf" class="btn secondary" target="_blank">Download PDF</a>
+          </div>
+        <% } else { %>
+          <%/* Default: stripe mode */%>
+          <div class="actions" style="margin-top:1.5rem;">
+            <% if (stripeConfiguredForUser) { %>
+              <form method="post" action="/i/<%= invoice.public_token %>/pay" style="display:inline;">
+                <button type="submit">Pay <%= formatMoney(invoice.total_cents, invoice.currency) %> now</button>
+              </form>
+            <% } else { %>
+              <span class="muted" style="font-size:0.875rem;">Payment link unavailable</span>
+            <% } %>
+            <a href="/i/<%= invoice.public_token %>/pdf" class="btn secondary" target="_blank">Download PDF</a>
+          </div>
+        <% } %>
       <% } %>
     </div>
   </div>

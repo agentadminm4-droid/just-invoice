@@ -54,6 +54,32 @@
 </div>
 
 <div class="card">
+  <h3>How clients pay you</h3>
+  <div class="field">
+    <label for="default_payment_mode">Default payment mode</label>
+    <select id="default_payment_mode" name="default_payment_mode">
+      <option value="stripe" <%= (values.default_payment_mode || 'stripe') === 'stripe' ? 'selected' : '' %>>Card payment (Stripe) — client clicks "Pay now" button</option>
+      <option value="etransfer" <%= values.default_payment_mode === 'etransfer' ? 'selected' : '' %>>e-Transfer only — show payment instructions on invoice, no Pay button</option>
+      <option value="both" <%= values.default_payment_mode === 'both' ? 'selected' : '' %>>Both — show Stripe button + e-Transfer instructions</option>
+    </select>
+    <small class="muted">Tradies: choose e-Transfer only. Freelancers billing cards: choose Card payment. Mixed clients: choose Both.</small>
+  </div>
+  <div class="field">
+    <label for="etransfer_email">e-Transfer email</label>
+    <input type="email" id="etransfer_email" name="etransfer_email"
+      value="<%= values.etransfer_email || '' %>"
+      placeholder="your@email.ca">
+    <small class="muted">The email clients send e-Transfers to. Required if you select e-Transfer or Both.</small>
+  </div>
+  <div class="field">
+    <label for="etransfer_instructions">e-Transfer instructions (optional)</label>
+    <textarea id="etransfer_instructions" name="etransfer_instructions" rows="3"
+      placeholder="Please send e-Transfer to your@email.ca. Password: business name. Include invoice number in memo."><%= values.etransfer_instructions || '' %></textarea>
+    <small class="muted">Custom instructions shown on every invoice. Leave blank to use the default template above.</small>
+  </div>
+</div>
+
+<div class="card">
   <h3>Sales tax</h3>
   <div class="row">
     <div class="field">

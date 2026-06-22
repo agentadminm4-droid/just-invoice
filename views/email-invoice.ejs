@@ -68,6 +68,30 @@
               </table>
             </td>
           </tr>
+          <% const payMode = settings.default_payment_mode || 'stripe'; %>
+          <% if (payMode === 'etransfer') { %>
+          <tr>
+            <td style="padding:0 2rem 1rem;">
+              <p style="margin:0 0 0.75rem; font-size:15px;"><strong>How to pay:</strong></p>
+              <p style="margin:0; font-size:15px; line-height:1.5;">
+                <%= settings.etransfer_instructions || ('Please send e-Transfer to ' + settings.etransfer_email + '. Include invoice number ' + invoice.number + ' in the memo.') %>
+              </p>
+            </td>
+          </tr>
+          <tr>
+            <td align="center" style="padding:1rem 2rem 2rem;">
+              <a href="<%= shareUrl %>"
+                 style="display:inline-block; background:#1a1a1a; color:#ffffff; text-decoration:none; padding:0.75rem 1.75rem; border-radius:6px; font-weight:600; font-size:15px;">
+                View Invoice
+              </a>
+            </td>
+          </tr>
+          <% } else if (payMode === 'both') { %>
+          <tr>
+            <td style="padding:0 2rem 1rem;">
+              <p style="margin:0; font-size:14px; color:#444; line-height:1.5;">You can pay this invoice by card or by e-Transfer. See the invoice for details.</p>
+            </td>
+          </tr>
           <tr>
             <td align="center" style="padding:1rem 2rem 2rem;">
               <a href="<%= shareUrl %>"
@@ -76,6 +100,16 @@
               </a>
             </td>
           </tr>
+          <% } else { %>
+          <tr>
+            <td align="center" style="padding:1rem 2rem 2rem;">
+              <a href="<%= shareUrl %>"
+                 style="display:inline-block; background:#1a1a1a; color:#ffffff; text-decoration:none; padding:0.75rem 1.75rem; border-radius:6px; font-weight:600; font-size:15px;">
+                View &amp; Pay Invoice
+              </a>
+            </td>
+          </tr>
+          <% } %>
           <% if (invoice.notes) { %>
             <tr>
               <td style="padding:0 2rem 1.5rem;">

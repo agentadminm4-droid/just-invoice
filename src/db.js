@@ -86,6 +86,7 @@ ensureColumn('invoices', 'apply_tax', 'apply_tax INTEGER');  /* 1=yes, 0=no, NUL
 
 // user_id on invoices + clients. Nullable at first so we can backfill.
 ensureColumn('invoices', 'user_id', 'user_id INTEGER REFERENCES users(id)');
+ensureColumn('invoices', 'payment_method', "payment_method TEXT DEFAULT 'stripe'");
 ensureColumn('clients', 'user_id', 'user_id INTEGER REFERENCES users(id)');
 ensureColumn('clients', 'address', "address TEXT DEFAULT ''");
 
@@ -188,6 +189,9 @@ const DEFAULT_SETTINGS = {
   tax_rate: '0.13',
   tax_enabled: '0',
   stripe_secret_key: '',
+  default_payment_mode: 'stripe',
+  etransfer_email: '',
+  etransfer_instructions: '',
 };
 
 function seedUserSettings(userId, overrides = {}) {
@@ -217,6 +221,13 @@ function allSettings(userId) {
   return { ...DEFAULT_SETTINGS, ...map };
 }
 
+// Mark an invoice as paid manually (e-Transfer or other non-Stripe payment).
+function markInvoicePaid(invoiceId, paymentMethod) {
+  db.prepare(
+    'UPDATE invoices SET status = ?, paid_at = ?, payment_method = ? WHERE id = ?'
+  ).run('paid', new Date().toISOString(), paymentMethod || 'manual', invoiceId);
+}
+
 module.exports = {
   db,
   readSetting,
@@ -224,4 +235,5 @@ module.exports = {
   allSettings,
   seedUserSettings,
   claimLegacyData,
+  markInvoicePaid,
 };

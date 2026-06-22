@@ -13,7 +13,7 @@ const express = require('express');
 const session = require('express-session');
 const SQLiteStore = require('connect-sqlite3')(session);
 
-const { db, allSettings, readSetting, writeSetting } = require('./db');
+const { db, allSettings, readSetting, writeSetting, markInvoicePaid } = require('./db');
 const invoicesLib = require('./invoices');
 const usersLib = require('./users');
 const { toCents, formatMoney, fromCents, lineTotal, invoiceTotal } = require('./money');
@@ -378,7 +378,8 @@ app.get('/dashboard', requireAuth, (req, res) => {
     paid: invoices.filter(i => i.status === 'paid').reduce((s, i) => s + i.total_cents, 0),
     count: invoices.length,
   };
-  res.render('dashboard', { invoices, totals });
+  const userSettings = allSettings(req.session.userId);
+  res.render('dashboard', { invoices, totals, userSettings });
 });
 
 app.get('/invoices/new', requireAuth, (req, res) => {
@@ -564,7 +565,23 @@ app.post('/settings', requireAuth, (req, res) => {
   if (Object.prototype.hasOwnProperty.call(req.body, 'stripe_secret_key')) {
     writeSetting(req.session.userId, 'stripe_secret_key', String(req.body.stripe_secret_key || '').trim());
   }
+  // e-Transfer / payment mode settings
+  const validModes = ['stripe', 'etransfer', 'both'];
+  const mode = validModes.includes(req.body.default_payment_mode) ? req.body.default_payment_mode : 'stripe';
+  writeSetting(req.session.userId, 'default_payment_mode', mode);
+  writeSetting(req.session.userId, 'etransfer_email', String(req.body.etransfer_email || '').trim());
+  writeSetting(req.session.userId, 'etransfer_instructions', String(req.body.etransfer_instructions || '').trim());
   res.redirect('/settings');
+});
+
+// Mark invoice as paid (for non-Stripe payments such as e-Transfer).
+app.post('/invoices/:id/mark-paid', requireAuth, async (req, res) => {
+  const invoice = invoicesLib.getInvoiceForUser(req.session.userId, parseInt(req.params.id, 10));
+  if (!invoice || invoice.user_id !== req.session.userId) {
+    return res.status(404).render('error', { message: 'Invoice not found' });
+  }
+  markInvoicePaid(invoice.id, req.body.payment_method || 'manual');
+  res.redirect('/dashboard');
 });
 
 // -----------------------------------------------------------------------------
