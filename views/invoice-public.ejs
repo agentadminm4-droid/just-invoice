@@ -100,7 +100,7 @@
           <div class="how-to-pay" style="background:var(--blue-light,#eff6ff); border-left:4px solid var(--blue,#3b82f6); padding:1.25rem 1.5rem; margin-top:2rem; border-radius:0 6px 6px 0;">
             <h3 style="margin:0 0 0.75rem;">How to pay</h3>
             <p style="margin:0 0 0.75rem;">
-              <%= settings.etransfer_instructions || ('Please send e-Transfer to ' + settings.etransfer_email + '. Include invoice number ' + invoice.number + ' in the memo.') %>
+              <% if (settings.etransfer_instructions) { %><%= settings.etransfer_instructions %><% } else if (settings.etransfer_email) { %>Please send e-Transfer to <strong><%= settings.etransfer_email %></strong>. Include invoice number <%= invoice.number %> in the memo.<% } else { %>Please contact <%= settings.business_name %> for payment details.<% } %>
             </p>
             <p style="font-size:0.85rem; color:var(--muted,#666); margin:0;">
               Once you&rsquo;ve sent the e-Transfer, the invoice will be marked paid once <%= settings.business_name %> confirms receipt.
@@ -119,7 +119,7 @@
             <% } %>
             <p style="margin:0 0 0.5rem;"><strong><%= stripeConfiguredForUser ? 'Option 2: Pay by e-Transfer' : 'Pay by e-Transfer' %></strong></p>
             <p style="margin:0;">
-              <%= settings.etransfer_instructions || ('Please send e-Transfer to ' + settings.etransfer_email + '. Include invoice number ' + invoice.number + ' in the memo.') %>
+              <% if (settings.etransfer_instructions) { %><%= settings.etransfer_instructions %><% } else if (settings.etransfer_email) { %>Please send e-Transfer to <strong><%= settings.etransfer_email %></strong>. Include invoice number <%= invoice.number %> in the memo.<% } else { %>Please contact <%= settings.business_name %> for payment details.<% } %>
             </p>
           </div>
           <div class="actions" style="margin-top:1.5rem;">
