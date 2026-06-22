@@ -566,6 +566,8 @@ app.post('/settings', requireAuth, (req, res) => {
     writeSetting(req.session.userId, 'stripe_secret_key', String(req.body.stripe_secret_key || '').trim());
   }
   // e-Transfer / payment mode settings
+  console.log('[DEBUG settings POST] body keys:', Object.keys(req.body));
+  console.log('[DEBUG settings POST] default_payment_mode:', req.body.default_payment_mode);
   const validModes = ['stripe', 'etransfer', 'both'];
   const mode = validModes.includes(req.body.default_payment_mode) ? req.body.default_payment_mode : 'stripe';
   writeSetting(req.session.userId, 'default_payment_mode', mode);
