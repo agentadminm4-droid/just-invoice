@@ -550,6 +550,13 @@ app.get('/settings', requireAuth, (req, res) => {
   });
 });
 
+app.post('/settings/stripe', requireAuth, (req, res) => {
+  if (Object.prototype.hasOwnProperty.call(req.body, 'stripe_secret_key')) {
+    writeSetting(req.session.userId, 'stripe_secret_key', String(req.body.stripe_secret_key || '').trim());
+  }
+  res.redirect('/settings');
+});
+
 app.post('/settings', requireAuth, (req, res) => {
   const keys = ['business_name', 'business_email', 'business_phone', 'business_address', 'invoice_prefix'];
   for (const k of keys) {
@@ -561,13 +568,7 @@ app.post('/settings', requireAuth, (req, res) => {
   writeSetting(req.session.userId, 'tax_name', String(req.body.tax_name || 'Tax').trim().slice(0, 20));
   writeSetting(req.session.userId, 'tax_rate', String(req.body.tax_rate || '0'));
   writeSetting(req.session.userId, 'tax_enabled', req.body.tax_enabled === '1' ? '1' : '0');
-  // Per-user Stripe key (only update if field was submitted)
-  if (Object.prototype.hasOwnProperty.call(req.body, 'stripe_secret_key')) {
-    writeSetting(req.session.userId, 'stripe_secret_key', String(req.body.stripe_secret_key || '').trim());
-  }
   // e-Transfer / payment mode settings
-  console.log('[DEBUG settings POST] body keys:', Object.keys(req.body));
-  console.log('[DEBUG settings POST] default_payment_mode:', req.body.default_payment_mode);
   const validModes = ['stripe', 'etransfer', 'both'];
   const mode = validModes.includes(req.body.default_payment_mode) ? req.body.default_payment_mode : 'stripe';
   writeSetting(req.session.userId, 'default_payment_mode', mode);

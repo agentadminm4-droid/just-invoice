@@ -34,11 +34,7 @@
   <p class="muted" style="margin:0.5rem 0 0;">Global fallback — add your own key below so payment links use your Stripe account.</p>
 </div>
 
-<form method="post" action="/settings" autocomplete="off">
-<!-- Dummy fields trick browser into not offering to save the Stripe key as a password -->
-<input type="text" name="_fake_user" value="" style="display:none;" aria-hidden="true" tabindex="-1">
-<input type="password" name="_fake_pass" value="" autocomplete="new-password" style="display:none;" aria-hidden="true" tabindex="-1">
-
+<form method="post" action="/settings/stripe" autocomplete="off" style="margin:0;">
 <div class="card">
   <h3>Payments (Stripe) — Your key</h3>
   <div class="field">
@@ -54,7 +50,13 @@
     <small class="muted">Get yours at <a href="https://dashboard.stripe.com/apikeys" target="_blank" rel="noopener">dashboard.stripe.com/apikeys</a> — starts with <code>sk_test_</code> or <code>sk_live_</code></small><br>
     <small class="muted">This is stored securely and used only to generate payment links on your invoices. Payment links will be hidden from clients until this is set.</small>
   </div>
+  <div class="actions" style="margin-top:1rem;">
+    <button type="submit">Save Stripe key</button>
+  </div>
 </div>
+</form>
+
+<form method="post" action="/settings" autocomplete="off">
 
 <div class="card">
   <h3>How clients pay you</h3>
