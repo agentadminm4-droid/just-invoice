@@ -33,7 +33,7 @@
   </nav>
 
   <h1 style="font-size:1.6rem; font-weight:800; letter-spacing:-0.02em; margin-bottom:0.25rem;">Getting Started</h1>
-  <p class="muted" style="margin-bottom:2.5rem;">Set up JustInvoice in a few minutes. Most steps are optional — start simple and add more as you need it.</p>
+  <p class="muted" style="margin-bottom:2.5rem;">Set up JustInvoice in a few minutes. The minimum is: business info + tax + create your first invoice. Stripe is <em>optional</em> — if your clients pay by Interac e-Transfer (most Canadian service businesses), you don't need it at all.</p>
 
   <!-- Step 1 -->
   <div class="setup-step">
@@ -69,16 +69,28 @@
   <div class="setup-step">
     <div class="step-badge optional">4</div>
     <div class="step-body">
-      <h3>Enable online payments <span class="optional-tag">optional</span></h3>
-      <p>To let clients pay by card directly on the invoice, you need a <a href="https://stripe.com" target="_blank" rel="noopener">Stripe</a> account.</p>
+      <h3>Choose how you want to get paid <span class="optional-tag">recommended</span></h3>
+      <p>You have two options. Pick whichever fits your business — you can change this any time in <a href="/settings">Settings → How clients pay you</a>.</p>
+
+      <p style="margin-top:0.75rem;"><strong style="color:var(--ink);">Option A — Interac e-Transfer (recommended for Canadian service businesses, tradies, freelancers)</strong></p>
+      <ol style="margin:0.5rem 0; padding-left:1.25rem; color:var(--muted); font-size:0.95rem;">
+        <li>In <a href="/settings">Settings → How clients pay you</a>, set <strong>Default payment mode</strong> to <em>e-Transfer only</em></li>
+        <li>Enter your e-Transfer email (e.g. <code>you@gmail.com</code>)</li>
+        <li>Optionally add custom instructions (e.g. <em>"Please send e-Transfer with invoice number in the memo"</em>)</li>
+      </ol>
+      <p>Your invoices will display clear e-Transfer instructions and a "Mark paid" button on your dashboard for when the payment clears. <strong>No Stripe needed, no transaction fees.</strong></p>
+
+      <p style="margin-top:0.75rem;"><strong style="color:var(--ink);">Option B — Stripe card payments (recommended for US/UK/AU freelancers, e-commerce, anyone whose clients prefer cards)</strong></p>
       <ol style="margin:0.5rem 0; padding-left:1.25rem; color:var(--muted); font-size:0.95rem;">
         <li>Sign up or log in at <a href="https://dashboard.stripe.com" target="_blank" rel="noopener">dashboard.stripe.com</a></li>
         <li>Go to <a href="https://dashboard.stripe.com/apikeys" target="_blank" rel="noopener">Developers → API keys</a></li>
         <li>Copy your <strong>Secret key</strong> (starts with <code>sk_test_</code> or <code>sk_live_</code>)</li>
         <li>Paste it into <a href="/settings">Settings → Payments (Stripe) → Your key</a></li>
+        <li>Set <strong>Default payment mode</strong> to <em>Stripe</em> (or <em>Both</em> if some clients pay by e-Transfer)</li>
       </ol>
-      <p>Once set, a "Pay now" button will appear on your client-facing invoices. Stripe handles the payment — money goes directly to your Stripe account.</p>
-      <p><strong>Note:</strong> Start with a <code>sk_test_</code> key to test, switch to <code>sk_live_</code> for real payments.</p>
+      <p>Once set, a "Pay now" button appears on your client-facing invoices. Stripe handles the payment — money goes directly to your Stripe account. <strong>Note:</strong> Start with a <code>sk_test_</code> key to test, switch to <code>sk_live_</code> for real payments.</p>
+
+      <p style="margin-top:0.75rem;"><strong>Not sure?</strong> Start with <strong>Option A</strong> (e-Transfer) — it works for ~70% of Canadian small businesses, no setup beyond entering your email, and you can switch to Stripe later if you need to.</p>
     </div>
   </div>
 
