@@ -93,7 +93,14 @@ app.set('trust proxy', 1);
 
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
-app.use('/static', express.static(path.join(__dirname, '..', 'public')));
+app.use('/static', express.static(path.join(__dirname, '..', 'public'), {
+  // Cache static assets for 1 day. They're fingerprinted on deploy
+  // (CSS bumped ?v=N on each edit) so safe to cache aggressively.
+  maxAge: '1d',
+  etag: true,
+}));
+// Override express.static's default Cache-Control header on /static assets.
+// express.static sets 'public, max-age=0' by default; we want 1 day.
 
 // Prevent browser caching of HTML pages. Static assets (CSS/JS/images under
 // /static) are still cacheable for 1 day — they're fingerprinted on deploy.
