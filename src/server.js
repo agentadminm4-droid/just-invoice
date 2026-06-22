@@ -95,6 +95,26 @@ app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 app.use('/static', express.static(path.join(__dirname, '..', 'public')));
 
+// Prevent browser caching of HTML pages. Static assets (CSS/JS/images under
+// /static) are still cacheable for 1 day — they're fingerprinted on deploy.
+// Without this, a user who visited the marketing pages before a feature
+// ship will see stale content (e.g. old Stripe-only FAQ) until they
+// hard-refresh. Real conversion bug for repeat visitors.
+// See: 2026-06-22 incident where browser-cached pricing page showed
+// old "Stripe-only" FAQ after e-Transfer feature went live.
+app.use((req, res, next) => {
+  if (req.path.startsWith('/static/')) {
+    // Static assets: cache 1 day
+    res.set('Cache-Control', 'public, max-age=86400');
+  } else {
+    // HTML pages: never cache. Forces re-fetch on every visit.
+    res.set('Cache-Control', 'no-store, no-cache, must-revalidate, max-age=0');
+    res.set('Pragma', 'no-cache');
+    res.set('Expires', '0');
+  }
+  next();
+});
+
 app.use(session({
   store: new SQLiteStore({
     db: 'sessions.db',
