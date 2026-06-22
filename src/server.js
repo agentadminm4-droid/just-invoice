@@ -111,13 +111,18 @@ app.use('/static', express.static(path.join(__dirname, '..', 'public'), {
 // old "Stripe-only" FAQ after e-Transfer feature went live.
 app.use((req, res, next) => {
   if (req.path.startsWith('/static/')) {
-    // Static assets: cache 1 day
+    // Static assets: cache 1 day. Fingerprinted on deploy so safe.
     res.set('Cache-Control', 'public, max-age=86400');
   } else {
-    // HTML pages: never cache. Forces re-fetch on every visit.
+    // HTML pages: never cache, anywhere — browser, proxies, CDNs.
+    // Surrogate-Control tells Railway's Hikari edge cache to skip caching.
+    // Without it, Hikari ignores no-store and serves stale HTML to users
+    // even though the backend has new content (Jun 22 incident).
     res.set('Cache-Control', 'no-store, no-cache, must-revalidate, max-age=0');
     res.set('Pragma', 'no-cache');
     res.set('Expires', '0');
+    res.set('Surrogate-Control', 'no-store');
+    res.set('Vary', '*');
   }
   next();
 });
