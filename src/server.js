@@ -191,6 +191,14 @@ app.get('/compare/justinvoice-vs-wave-vs-freshbooks', (req, res) => {
   });
 });
 
+// Free GST/HST calculator — public top-of-funnel tool. No signup, no auth.
+// Serves all 13 provinces/territories with 2026 CRA rates. Pure client-side math.
+app.get('/resources/gst-hst-calculator', (req, res) => {
+  res.render('gst-hst-calculator', {
+    title: 'Free Canadian GST/HST Calculator — 2026 Rates, No Signup | JustInvoice',
+  });
+});
+
 app.get('/terms', (req, res) => res.render('terms'));
 app.get('/privacy', (req, res) => res.render('privacy'));
 
@@ -358,6 +366,11 @@ app.get('/sitemap.xml', (req, res) => {
     <loc>https://getjustinvoice.app/compare/justinvoice-vs-wave-vs-freshbooks</loc>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://getjustinvoice.app/resources/gst-hst-calculator</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.9</priority>
   </url>
   <url>
     <loc>https://getjustinvoice.app/privacy</loc>

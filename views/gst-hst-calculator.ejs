@@ -1,0 +1,431 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title><%= title %></title>
+  <meta name="description" content="Free Canadian GST/HST calculator for all 13 provinces and territories. 2026 rates from CRA. No signup, no email required — just calculate, then invoice with JustInvoice. Handles GST, HST, QST, and PST. Forward and reverse calculation.">
+  <meta name="robots" content="index, follow">
+  <link rel="canonical" href="https://getjustinvoice.app/resources/gst-hst-calculator">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://getjustinvoice.app/resources/gst-hst-calculator">
+  <meta property="og:title" content="Free Canadian GST/HST Calculator — 2026 Rates, No Signup | JustInvoice">
+  <meta property="og:description" content="Calculate GST, HST, QST, and PST for any Canadian province in 2026. Free, no signup, accurate to the latest CRA rates. All 13 provinces and territories.">
+  <meta property="og:image" content="https://getjustinvoice.app/static/images/og-preview.png">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Free Canadian GST/HST Calculator — 2026 Rates">
+  <meta name="twitter:description" content="Calculate GST, HST, QST, and PST for any Canadian province. Free, no signup. All 13 provinces and territories. 2026 CRA rates.">
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    "name": "Canadian GST/HST Calculator",
+    "description": "Free online calculator for Canadian federal and provincial sales tax. Supports all 13 provinces and territories with current 2026 rates from the Canada Revenue Agency.",
+    "url": "https://getjustinvoice.app/resources/gst-hst-calculator",
+    "applicationCategory": "FinanceApplication",
+    "operatingSystem": "Any (web browser)",
+    "offers": {
+      "@type": "Offer",
+      "price": "0",
+      "priceCurrency": "CAD"
+    },
+    "creator": {
+      "@type": "Organization",
+      "name": "JustInvoice",
+      "url": "https://getjustinvoice.app"
+    }
+  }
+  </script>
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      {
+        "@type": "Question",
+        "name": "What's the difference between GST and HST?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "GST (Goods and Services Tax) is a 5% federal tax that applies across all of Canada. HST (Harmonized Sales Tax) is a single combined tax that some provinces have merged with the federal GST — it includes the 5% federal portion plus a provincial portion (8% in Ontario for the 13% total, 9% in NB/NL/PE for the 15% total, 9% in NS for the 14% total). Five provinces use HST; the rest charge GST plus a separate provincial tax (PST, QST, or RST)."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "How is QST calculated in Quebec?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "QST (Quebec Sales Tax) is 9.975% and is calculated on the price INCLUDING GST. So on a $100 invoice: GST 5% = $5, QST 9.975% on $105 = $10.47, total = $115.47. The effective combined rate in Quebec is 14.975% but the actual amount charged is slightly higher due to the compound calculation."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Is this calculator accurate for 2026?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Yes. The rates are current as of 2026, including Nova Scotia's HST reduction from 15% to 14% effective April 1, 2025 (the first provincial sales tax rate change in 14 years). Rates are sourced from the Canada Revenue Agency (CRA) and cross-referenced with provincial finance ministries."
+        }
+      }
+    ]
+  }
+  </script>
+
+  <link rel="stylesheet" href="/static/landing.css">
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='6' fill='%232563eb'/><text x='16' y='23' font-size='20' text-anchor='middle' fill='white' font-family='system-ui' font-weight='bold'>J</text></svg>">
+  <style>
+    .calc-page { max-width: 720px; margin: 0 auto; padding: 3rem 1.5rem; }
+    .calc-page h1 { font-size: 2.2rem; font-weight: 800; letter-spacing: -0.02em; margin-bottom: 0.75rem; line-height: 1.15; }
+    .calc-page h2 { font-size: 1.4rem; font-weight: 700; margin-top: 2.5rem; margin-bottom: 0.75rem; }
+    .calc-page p, .calc-page li { font-size: 1.05rem; line-height: 1.7; color: var(--ink); margin-bottom: 0.85rem; }
+    .calc-page ul { padding-left: 1.5rem; margin-bottom: 1rem; }
+    .calc-eyebrow { color: var(--muted); font-size: 0.9rem; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.5rem; }
+    .calc-intro { font-size: 1.15rem; color: var(--muted); margin-bottom: 2rem; }
+    .calc-card { background: #fff; border: 1px solid var(--border); border-radius: var(--radius); padding: 1.5rem; margin: 1.5rem 0; box-shadow: var(--shadow); }
+    .calc-field { display: flex; flex-direction: column; gap: 0.4rem; margin-bottom: 1rem; }
+    .calc-field label { font-size: 0.9rem; font-weight: 600; color: var(--ink); }
+    .calc-field input, .calc-field select { font-size: 1.05rem; padding: 0.65rem 0.8rem; border: 1px solid var(--border); border-radius: 8px; background: #fff; color: var(--ink); font-family: inherit; }
+    .calc-field input:focus, .calc-field select:focus { outline: 2px solid var(--blue); outline-offset: 1px; border-color: var(--blue); }
+    .calc-field-inline { display: flex; align-items: center; gap: 0.5rem; }
+    .calc-field-inline label { font-size: 0.95rem; color: var(--muted); }
+    .calc-field-inline input[type="radio"] { margin: 0; }
+    .calc-result { background: var(--blue-light); border: 1px solid var(--blue); border-radius: var(--radius); padding: 1.25rem; margin-top: 1rem; }
+    .calc-result-row { display: flex; justify-content: space-between; align-items: baseline; padding: 0.4rem 0; border-bottom: 1px dashed #c7d8f5; }
+    .calc-result-row:last-child { border-bottom: none; }
+    .calc-result-label { color: var(--ink); font-size: 0.95rem; }
+    .calc-result-value { color: var(--ink); font-weight: 700; font-size: 1.05rem; font-variant-numeric: tabular-nums; }
+    .calc-result-total { background: var(--blue); color: #fff; border-radius: 8px; padding: 0.75rem 1rem; margin-top: 0.75rem; display: flex; justify-content: space-between; align-items: baseline; }
+    .calc-result-total-label { font-size: 1rem; font-weight: 700; }
+    .calc-result-total-value { font-size: 1.5rem; font-weight: 800; font-variant-numeric: tabular-nums; }
+    .calc-rate-table { width: 100%; border-collapse: collapse; margin: 1.5rem 0; font-size: 0.92rem; }
+    .calc-rate-table th { background: var(--blue-light); text-align: left; padding: 0.65rem 0.8rem; border-bottom: 2px solid var(--blue); font-weight: 700; }
+    .calc-rate-table td { padding: 0.65rem 0.8rem; border-bottom: 1px solid var(--border); }
+    .calc-rate-table tr:last-child td { border-bottom: none; }
+    .calc-rate-table td.rate { font-variant-numeric: tabular-nums; font-weight: 600; }
+    .calc-cta { background: var(--blue-light); border-left: 4px solid var(--blue); padding: 1.25rem 1.5rem; margin: 2rem 0; border-radius: var(--radius); }
+    .calc-cta a { display: inline-block; background: var(--blue); color: #fff; padding: 0.7rem 1.4rem; border-radius: var(--radius); font-weight: 700; text-decoration: none; margin-top: 0.5rem; }
+    .calc-cta a:hover { background: var(--blue-dark); }
+    .calc-faq { margin-top: 2.5rem; }
+    .calc-faq h3 { font-size: 1.05rem; font-weight: 700; margin-top: 1.25rem; margin-bottom: 0.4rem; }
+    .calc-faq p { font-size: 0.98rem; }
+    .calc-email-capture { background: #f8fafc; border: 1px dashed var(--border); border-radius: var(--radius); padding: 1rem 1.25rem; margin-top: 1.5rem; }
+    .calc-email-capture p { font-size: 0.92rem; color: var(--muted); margin-bottom: 0.6rem; }
+    .calc-email-capture-form { display: flex; gap: 0.5rem; flex-wrap: wrap; }
+    .calc-email-capture input[type="email"] { flex: 1 1 220px; padding: 0.55rem 0.8rem; border: 1px solid var(--border); border-radius: 6px; font-size: 0.95rem; }
+    .calc-email-capture button { background: #2563eb; color: #fff; border: 0; padding: 0.55rem 1.2rem; border-radius: 6px; font-weight: 600; cursor: pointer; font-size: 0.95rem; }
+    .calc-email-capture button:hover { background: #1d4ed8; }
+    .calc-disclaimer { color: var(--muted); font-size: 0.85rem; margin-top: 2rem; padding-top: 1.5rem; border-top: 1px solid var(--border); }
+    @media (max-width: 600px) {
+      .calc-page { padding: 2rem 1rem; }
+      .calc-page h1 { font-size: 1.7rem; }
+      .calc-result-total-value { font-size: 1.25rem; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ── Nav ── -->
+<nav class="landing-nav">
+  <div class="landing-nav-inner">
+    <a href="/" class="logo">Just<span>Invoice</span></a>
+    <nav>
+      <a href="/pricing">Pricing</a>
+      <a href="/compare/justinvoice-vs-wave-vs-freshbooks">vs Wave</a>
+      <a href="/login">Log in</a>
+      <a href="/signup" class="btn-primary">Get started free</a>
+    </nav>
+  </div>
+</nav>
+
+<div class="calc-page">
+  <p class="calc-eyebrow">Free tool · No signup · 2026 CRA rates</p>
+  <h1>Canadian GST/HST Calculator</h1>
+  <p class="calc-intro">Calculate the federal and provincial sales tax for any Canadian province or territory in 2026. Free, no signup, no email required. Handles GST, HST, QST, and PST — including Quebec's compound QST-on-GST calculation.</p>
+
+  <!-- ── Calculator ── -->
+  <div class="calc-card">
+    <div class="calc-field">
+      <label for="province">Province or territory</label>
+      <select id="province" name="province">
+        <option value="AB">Alberta (5% GST only)</option>
+        <option value="BC">British Columbia (5% GST + 7% PST = 12%)</option>
+        <option value="MB">Manitoba (5% GST + 7% RST = 12%)</option>
+        <option value="NB">New Brunswick (15% HST)</option>
+        <option value="NL">Newfoundland and Labrador (15% HST)</option>
+        <option value="NS">Nova Scotia (14% HST)</option>
+        <option value="ON" selected>Ontario (13% HST)</option>
+        <option value="PE">Prince Edward Island (15% HST)</option>
+        <option value="QC">Quebec (5% GST + 9.975% QST = 14.975%)</option>
+        <option value="SK">Saskatchewan (5% GST + 6% PST = 11%)</option>
+        <option value="NT">Northwest Territories (5% GST only)</option>
+        <option value="NU">Nunavut (5% GST only)</option>
+        <option value="YT">Yukon (5% GST only)</option>
+      </select>
+    </div>
+
+    <div class="calc-field">
+      <label>Calculation type</label>
+      <div class="calc-field-inline">
+        <input type="radio" id="type-forward" name="calc-type" value="forward" checked>
+        <label for="type-forward">Add tax to a price (price before tax)</label>
+      </div>
+      <div class="calc-field-inline">
+        <input type="radio" id="type-reverse" name="calc-type" value="reverse">
+        <label for="type-reverse">Remove tax from a price (price includes tax)</label>
+      </div>
+    </div>
+
+    <div class="calc-field">
+      <label for="amount">Amount (CAD)</label>
+      <input type="text" id="amount" name="amount" inputmode="decimal" placeholder="100.00" value="100.00" autocomplete="off">
+    </div>
+
+    <div id="result" class="calc-result" aria-live="polite">
+      <div class="calc-result-row">
+        <span class="calc-result-label">Subtotal (before tax)</span>
+        <span class="calc-result-value" id="r-subtotal">$0.00</span>
+      </div>
+      <div class="calc-result-row" id="row-gst">
+        <span class="calc-result-label">GST (5% federal)</span>
+        <span class="calc-result-value" id="r-gst">$0.00</span>
+      </div>
+      <div class="calc-result-row" id="row-pst" style="display:none;">
+        <span class="calc-result-label" id="r-pst-label">PST</span>
+        <span class="calc-result-value" id="r-pst">$0.00</span>
+      </div>
+      <div class="calc-result-row" id="row-hst" style="display:none;">
+        <span class="calc-result-label" id="r-hst-label">HST</span>
+        <span class="calc-result-value" id="r-hst">$0.00</span>
+      </div>
+      <div class="calc-result-total">
+        <span class="calc-result-total-label">Total with tax</span>
+        <span class="calc-result-total-value" id="r-total">$0.00</span>
+      </div>
+    </div>
+
+    <div class="calc-email-capture" id="email-capture" style="display:none;">
+      <p><strong>Need this calculation in a PDF?</strong> Email it to yourself (and we'll send you the free JustInvoice launch notification).</p>
+      <form class="calc-email-capture-form" onsubmit="return submitEmail(event)">
+        <input type="email" id="email" placeholder="you@example.com" required>
+        <button type="submit">Email me a PDF</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- ── 2026 rates table ── -->
+  <h2>Current 2026 sales tax rates by province</h2>
+  <table class="calc-rate-table">
+    <thead>
+      <tr>
+        <th>Province / Territory</th>
+        <th>Type</th>
+        <th>Rate</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr><td>Alberta (AB)</td><td>GST only</td><td class="rate">5%</td></tr>
+      <tr><td>British Columbia (BC)</td><td>GST + PST</td><td class="rate">12% (5% + 7%)</td></tr>
+      <tr><td>Manitoba (MB)</td><td>GST + RST</td><td class="rate">12% (5% + 7%)</td></tr>
+      <tr><td>New Brunswick (NB)</td><td>HST</td><td class="rate">15%</td></tr>
+      <tr><td>Newfoundland and Labrador (NL)</td><td>HST</td><td class="rate">15%</td></tr>
+      <tr><td>Nova Scotia (NS)</td><td>HST</td><td class="rate">14% (reduced from 15% Apr 1, 2025)</td></tr>
+      <tr><td>Ontario (ON)</td><td>HST</td><td class="rate">13%</td></tr>
+      <tr><td>Prince Edward Island (PE)</td><td>HST</td><td class="rate">15%</td></tr>
+      <tr><td>Quebec (QC)</td><td>GST + QST</td><td class="rate">14.975% (5% + 9.975% QST on subtotal+GST)</td></tr>
+      <tr><td>Saskatchewan (SK)</td><td>GST + PST</td><td class="rate">11% (5% + 6%)</td></tr>
+      <tr><td>Northwest Territories (NT)</td><td>GST only</td><td class="rate">5%</td></tr>
+      <tr><td>Nunavut (NU)</td><td>GST only</td><td class="rate">5%</td></tr>
+      <tr><td>Yukon (YT)</td><td>GST only</td><td class="rate">5%</td></tr>
+    </tbody>
+  </table>
+  <p style="font-size: 0.88rem; color: var(--muted);">Sources: Canada Revenue Agency, Revenu Québec, BC Ministry of Finance, Saskatchewan Ministry of Finance. Rates current as of 2026; last reviewed July 5, 2026.</p>
+
+  <!-- ── CTA ── -->
+  <div class="calc-cta">
+    <strong>Need to actually send an invoice with this tax?</strong> JustInvoice is flat-rate $9/mo USD, includes GST/HST calculation in the invoice builder, supports one-click Stripe payments so your clients pay 11 days faster, and has zero transaction fees (unlike Wave's 2.9% + 30¢ per payment). Free during early access, Aug 15 launch.
+    <br><a href="/signup">Try JustInvoice free →</a>
+  </div>
+
+  <!-- ── FAQ ── -->
+  <div class="calc-faq">
+    <h2>Frequently asked questions</h2>
+
+    <h3>What's the difference between GST and HST?</h3>
+    <p>GST (Goods and Services Tax) is a 5% federal tax that applies across all of Canada. HST (Harmonized Sales Tax) is a single combined tax that some provinces have merged with the federal GST — it includes the 5% federal portion plus a provincial portion (8% in Ontario for the 13% total, 9% in NB/NL/PE for the 15% total, 9% in Nova Scotia for the 14% total). Five provinces use HST; the rest charge GST plus a separate provincial tax (PST, QST, or RST).</p>
+
+    <h3>How is QST calculated in Quebec?</h3>
+    <p>QST (Quebec Sales Tax) is 9.975% and is calculated on the price <strong>including GST</strong>. So on a $100 invoice: GST 5% = $5, QST 9.975% on $105 = $10.47, total = $115.47. The combined rate is 14.975% but the actual amount charged is slightly higher due to the compound calculation. This is the only province where the math works this way.</p>
+
+    <h3>Are these the current 2026 rates?</h3>
+    <p>Yes. Rates are sourced from the Canada Revenue Agency (CRA), Revenu Québec, and provincial finance ministries. The most recent change was Nova Scotia's HST reduction from 15% to 14% on April 1, 2025 — the first provincial rate change in 14 years. This page was last reviewed on July 5, 2026.</p>
+
+    <h3>Is this calculator really free? Do you store my data?</h3>
+    <p>Yes, it's free, and no, we don't store any calculation data. All the math runs in your browser — no API calls, no data sent to our servers. The optional email field at the bottom (which only appears after you calculate) is a PDF delivery request; it's the only thing that would touch our backend, and we only use it to send you the PDF and a launch notification.</p>
+
+    <h3>I'm a freelancer — should I charge GST/HST?</h3>
+    <p>You must register for GST/HST and charge it once your revenue over any rolling 12-month period exceeds $30,000 CAD (the "small supplier threshold"). Below that, registration is optional. Most provinces require you to register in the province where you supply the service. See the <a href="https://www.canada.ca/en/revenue-agency/services/tax/businesses/topics/gst-hst-businesses/when-register-charge.html" target="_blank" rel="noopener">CRA small supplier page</a> for the full rule.</p>
+
+    <h3>What's a typical Q1 / Q2 / etc. filing deadline?</h3>
+    <p>If you're a quarterly filer (most freelancers), the deadline is one month after the end of the quarter: April 30 for Q1 (Jan-Mar), July 31 for Q2 (Apr-Jun), October 31 for Q3 (Jul-Sep), January 31 for Q4 (Oct-Dec). Annual filers have until March 31 of the following year. The CRA charges penalties and interest on late filings.</p>
+  </div>
+
+  <p class="calc-disclaimer">
+    This calculator is provided for informational purposes only and does not constitute tax advice. Tax rates are sourced from the Canada Revenue Agency and provincial finance ministries, but may not reflect the most recent legislative changes. Always confirm with the CRA or a qualified accountant for filing decisions. JustInvoice is not a tax filing service.
+  </p>
+</div>
+
+<script>
+// Tax configuration for all 13 provinces/territories.
+// Composition: { gst, pst, hst, qst, pst_label, hst_label, pst_compound_on_gst }
+const TAX_CONFIG = {
+  AB: { gst: 0.05, pst: 0,    hst: 0,      qst: 0,        hst_label: '',            pst_label: '',                compound: false },
+  BC: { gst: 0.05, pst: 0.07, hst: 0,      qst: 0,        hst_label: '',            pst_label: 'PST (7%)',       compound: false },
+  MB: { gst: 0.05, pst: 0.07, hst: 0,      qst: 0,        hst_label: '',            pst_label: 'RST (7%)',       compound: false },
+  NB: { gst: 0,    pst: 0,    hst: 0.15,   qst: 0,        hst_label: 'HST (15%)',   pst_label: '',                compound: false },
+  NL: { gst: 0,    pst: 0,    hst: 0.15,   qst: 0,        hst_label: 'HST (15%)',   pst_label: '',                compound: false },
+  NS: { gst: 0,    pst: 0,    hst: 0.14,   qst: 0,        hst_label: 'HST (14%)',   pst_label: '',                compound: false },
+  ON: { gst: 0,    pst: 0,    hst: 0.13,   qst: 0,        hst_label: 'HST (13%)',   pst_label: '',                compound: false },
+  PE: { gst: 0,    pst: 0,    hst: 0.15,   qst: 0,        hst_label: 'HST (15%)',   pst_label: '',                compound: false },
+  QC: { gst: 0.05, pst: 0,    hst: 0,      qst: 0.09975,  hst_label: '',            pst_label: 'QST (9.975%)',   compound: true  }, // QST calculated on subtotal+GST
+  SK: { gst: 0.05, pst: 0.06, hst: 0,      qst: 0,        hst_label: '',            pst_label: 'PST (6%)',       compound: false },
+  NT: { gst: 0.05, pst: 0,    hst: 0,      qst: 0,        hst_label: '',            pst_label: '',                compound: false },
+  NU: { gst: 0.05, pst: 0,    hst: 0,      qst: 0,        hst_label: '',            pst_label: '',                compound: false },
+  YT: { gst: 0.05, pst: 0,    hst: 0,      qst: 0,        hst_label: '',            pst_label: '',                compound: false },
+};
+
+const $ = (id) => document.getElementById(id);
+
+function fmt(n) {
+  return '$' + n.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+}
+
+function parseAmount(v) {
+  if (typeof v === 'number') return v;
+  // Strip $, commas, spaces
+  const cleaned = String(v).replace(/[$,\s]/g, '');
+  const n = parseFloat(cleaned);
+  return isNaN(n) ? 0 : n;
+}
+
+function calculate() {
+  const province = $('province').value;
+  const type = document.querySelector('input[name="calc-type"]:checked').value;
+  const inputAmount = parseAmount($('amount').value);
+  const cfg = TAX_CONFIG[province];
+
+  if (inputAmount <= 0) {
+    $('r-subtotal').textContent = '$0.00';
+    $('r-gst').textContent = '$0.00';
+    $('r-pst').textContent = '$0.00';
+    $('r-hst').textContent = '$0.00';
+    $('r-total').textContent = '$0.00';
+    $('email-capture').style.display = 'none';
+    return;
+  }
+
+  let subtotal, gst, pst, hst, total;
+
+  if (type === 'forward') {
+    // Price before tax → add tax
+    subtotal = inputAmount;
+    gst = subtotal * cfg.gst;
+    if (cfg.hst > 0) {
+      // HST province: single combined tax, no separate GST
+      hst = subtotal * cfg.hst;
+      pst = 0;
+    } else {
+      hst = 0;
+      if (cfg.compound) {
+        // QC: QST on subtotal + GST
+        pst = (subtotal + gst) * cfg.qst;
+      } else {
+        pst = subtotal * cfg.pst;
+      }
+    }
+    total = subtotal + gst + pst + hst;
+  } else {
+    // Reverse: price includes tax → extract subtotal
+    // For HST provinces: subtotal = total / (1 + hst_rate)
+    // For GST+PST provinces (non-compound): subtotal = total / (1 + gst + pst)
+    // For QC (compound): subtotal = total / (1 + gst + qst * (1 + gst))
+    if (cfg.hst > 0) {
+      subtotal = inputAmount / (1 + cfg.hst);
+      hst = inputAmount - subtotal;
+      gst = 0;
+      pst = 0;
+    } else {
+      if (cfg.compound) {
+        // QC: total = subtotal * (1 + gst) * (1 + qst)
+        // subtotal = total / ((1 + gst) * (1 + qst))
+        subtotal = inputAmount / ((1 + cfg.gst) * (1 + cfg.qst));
+        gst = subtotal * cfg.gst;
+        pst = (subtotal + gst) * cfg.qst;
+      } else {
+        subtotal = inputAmount / (1 + cfg.gst + cfg.pst);
+        gst = subtotal * cfg.gst;
+        pst = subtotal * cfg.pst;
+      }
+      hst = 0;
+    }
+    total = inputAmount;
+  }
+
+  // Show/hide tax rows based on province config
+  // GST row: only show for non-HST provinces that have a separate GST
+  $('row-gst').style.display = (cfg.gst > 0 && cfg.hst === 0) ? 'flex' : 'none';
+  $('row-hst').style.display = (cfg.hst > 0) ? 'flex' : 'none';
+  $('row-pst').style.display = (cfg.pst > 0 || cfg.qst > 0) ? 'flex' : 'none';
+
+  $('r-hst-label').textContent = cfg.hst_label;
+  $('r-pst-label').textContent = cfg.pst_label;
+  $('r-subtotal').textContent = fmt(subtotal);
+  $('r-gst').textContent = fmt(gst);
+  $('r-pst').textContent = fmt(pst);
+  $('r-hst').textContent = fmt(hst);
+  $('r-total').textContent = fmt(total);
+
+  // Show email capture after first successful calculation
+  $('email-capture').style.display = 'block';
+}
+
+function submitEmail(event) {
+  event.preventDefault();
+  const email = $('email').value;
+  if (!email) return false;
+  // For v1: just show confirmation. Real PDF generation can be added in v2.
+  const btn = event.target.querySelector('button');
+  btn.textContent = 'Thanks! PDF coming soon.';
+  btn.disabled = true;
+  $('email').disabled = true;
+  // Optional: log to console for now, no backend call yet
+  console.log('Email capture (TODO: wire to backend):', email);
+  return false;
+}
+
+// Wire up inputs
+['province', 'amount'].forEach(id => {
+  $(id).addEventListener('input', calculate);
+  $(id).addEventListener('change', calculate);
+});
+document.querySelectorAll('input[name="calc-type"]').forEach(r => {
+  r.addEventListener('change', calculate);
+});
+
+// Initial calculation on page load (with default 100.00 in Ontario)
+calculate();
+</script>
+
+<!-- ── Footer ── -->
+<footer style="margin-top:3rem; padding:1.5rem 0; border-top:1px solid var(--border); text-align:center; font-size:0.82rem; color:var(--muted);">
+  <nav style="margin-bottom:0.5rem;">
+    <a href="/" style="margin:0 0.6rem;">Home</a>
+    <a href="/pricing" style="margin:0 0.6rem;">Pricing</a>
+    <a href="/compare/justinvoice-vs-wave-vs-freshbooks" style="margin:0 0.6rem;">vs Wave vs FreshBooks</a>
+    <a href="/resources/gst-hst-calculator" style="margin:0 0.6rem;">GST/HST Calculator</a>
+    <a href="/privacy" style="margin:0 0.6rem;">Privacy</a>
+    <a href="/terms" style="margin:0 0.6rem;">Terms</a>
+  </nav>
+  &copy; <%= new Date().getFullYear() %> JustInvoice. Free Canadian GST/HST calculator with current 2026 CRA rates.
+</footer>
+
+</body>
+</html>
